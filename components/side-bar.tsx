@@ -1,3 +1,3 @@
 export function SideBar() {
-  return <div>side bar Ren wrote it </div>
+  return <div>side bar Ren wrote it ok </div>
 }
