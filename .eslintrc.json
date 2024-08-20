@@ -1,8 +1,9 @@
 {
   "extends": ["next/core-web-vitals", "prettier", "plugin:tailwindcss/recommended"],
-  "plugins": ["prettier"],
+  "plugins": ["prettier", "tailwindcss"],
   "rules": {
-    "prettier/prettier": ["error"]
+    "tailwindcss/no-custom-classname": "off",
+    "tailwindcss/classnames-order": "error"
   },
   "settings": {
     "tailwindcss": {
