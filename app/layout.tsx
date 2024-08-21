@@ -4,7 +4,7 @@ import "./globals.css"
 import { Inter as FontSans } from "next/font/google"
 
 import { cn } from "@/lib/utils"
-import { SideBar } from "@/components/side-bar"
+import SideBar from "@/components/side-bar"
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -23,9 +23,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
-        <SideBar />
-        {children}
+      <body className={cn("bg-background min-h-screen font-sans antialiased", fontSans.variable)}>
+        <div className="flex">
+          <SideBar />
+          {children}
+        </div>
       </body>
     </html>
   )
