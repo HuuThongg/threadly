@@ -1,37 +1,93 @@
+"use client"
 import Link from "next/link"
 import React from "react"
-import { FaHome, FaSearch, FaHeart, FaUser, FaThumbtack } from "react-icons/fa" // Importing FontAwesome icons
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import Icon from "./icon"
+import { usePathname } from "next/navigation"
+import { cn } from "@/lib/utils"
+import dynamicIconImports from "lucide-react/dynamicIconImports"
+
+interface SidebarItem {
+  nameIcon: keyof typeof dynamicIconImports
+  link: string
+}
 
 const Sidebar = () => {
+  const pathname = usePathname()
+  const sidebarConstanst: SidebarItem[] = [
+    {
+      nameIcon: "house",
+      link: "/",
+    },
+    {
+      nameIcon: "search",
+      link: "/search",
+    },
+    {
+      nameIcon: "heart",
+      link: "/activity",
+    },
+    {
+      nameIcon: "user",
+      link: "/user",
+    },
+  ]
   return (
-    <div className="bg-background flex h-screen w-16 flex-col justify-between text-white">
+    <div className="flex h-screen w-[4.75rem] flex-col justify-between bg-background px-2 text-white">
       <div className="flex flex-col items-center py-4">
         <div className="mb-8">
-          <img
-            src="/path/to/logo.png" // Replace with your logo path
-            alt="Logo"
-            className="h-8 w-8"
-          />
+          <p className="font-serif font-extrabold italic">R&R</p>
         </div>
       </div>
 
       {/* Menu Icons */}
-      <div className="flex flex-col items-center space-y-8">
-        <Link
-          href={"/#"}
-          className="cursor-pointer rounded-xl bg-red-200 p-4 hover:bg-slate-500">
-          <FaHome size={24} />
-        </Link>
-
-        <FaSearch size={24} className="bg-primary" />
-        <FaHeart size={24} />
-        <FaUser size={24} />
+      <div className="flex flex-col items-center space-y-4">
+        {sidebarConstanst.map(({ nameIcon, link }) => {
+          const isActive =
+            pathname === link || (link !== "/" && pathname.startsWith(link))
+          return (
+            <Link
+              href={link}
+              key={nameIcon}
+              className={cn(
+                "cursor-pointer rounded-xl p-4 text-nonative hover:bg-primary-foreground hover:text-foreground",
+                {
+                  "bg-primary-foreground text-foreground": isActive,
+                  "bg-transparent": !isActive,
+                },
+              )}>
+              <Icon name={nameIcon} size={24} />
+            </Link>
+          )
+        })}
       </div>
 
       {/* Footer Menu Icons (if any) */}
       <div className="flex flex-col items-center pb-4">
         {/* Add footer icons if needed */}
-        <FaThumbtack size={24} />
+        <DropdownMenu>
+          <DropdownMenuTrigger className="cursor-pointer rounded-xl p-4 text-nonative hover:text-foreground focus-visible:outline-0">
+            <Icon name="align-left" size={24} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="mb-[-16px] ml-6 w-56 rounded-[16px] bg-primary-foreground p-2 text-primary">
+            <DropdownMenuItem className="rounded-xl px-2 py-4 text-[15px] font-semibold text-primary hover:bg-secondary">
+              Apperance
+            </DropdownMenuItem>
+            <DropdownMenuItem className="rounded-xl px-2 py-4 text-[15px] font-semibold text-primary hover:bg-secondary">
+              Settings
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="rounded-xl px-2 py-4 text-[15px] font-semibold text-primary hover:bg-secondary">
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   )

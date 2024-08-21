@@ -53,6 +53,7 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --non-active: 0 0% 47%;
   }
 
   .dark {
@@ -91,6 +92,99 @@
     @apply bg-background text-foreground;
   }
 }
-.dhjhj {
-  background: hsl(30, 80%, 45%);
+
+.background {
+  color: hsl(0, 0%, 4%);
+}
+
+.foreground {
+  color: hsl(0, 0%, 98%);
+}
+
+.card {
+  color: hsl(0, 0%, 3.9%);
+}
+
+.card-foreground {
+  color: hsl(0, 0%, 98%);
+}
+
+.popover {
+  color: hsl(0, 0%, 3.9%);
+}
+
+.popover-foreground {
+  color: hsl(0, 0%, 98%);
+}
+
+.primary {
+  color: hsl(0, 0%, 98%);
+}
+
+.primary-foreground {
+  color: hsl(0, 0%, 9%);
+}
+
+.secondary {
+  color: hsl(0, 0%, 15%);
+}
+
+.secondary-foreground {
+  color: hsl(0, 0%, 98%);
+}
+
+.muted {
+  color: hsl(0, 0%, 14.9%);
+}
+
+.muted-foreground {
+  color: hsl(0, 0%, 63.9%);
+}
+
+.accent {
+  color: hsl(0, 0%, 14.9%);
+}
+
+.accent-foreground {
+  color: hsl(0, 0%, 98%);
+}
+
+.destructive {
+  color: hsl(0, 62.8%, 31%);
+}
+
+.destructive-foreground {
+  color: hsl(0, 0%, 98%);
+}
+
+.border {
+  color: hsl(0, 0%, 15%);
+}
+
+.input {
+  color: hsl(0, 0%, 15%);
+}
+
+.ring {
+  color: hsl(0, 0%, 83%);
+}
+
+.chart-1 {
+  color: hsl(220, 70%, 50%);
+}
+
+.chart-2 {
+  color: hsl(160, 60%, 45%);
+}
+
+.chart-3 {
+  color: hsl(30, 80%, 55%);
+}
+
+.chart-4 {
+  color: hsl(280, 65%, 60%);
+}
+
+.chart-5 {
+  color: hsl(340, 75%, 55%);
 }
