@@ -8,13 +8,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import Icon from "./icon"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import dynamicIconImports from "lucide-react/dynamicIconImports"
+import { AlignLeft, Heart, House, LucideIcon, Search, User } from "lucide-react"
 
 interface SidebarItem {
-  nameIcon: keyof typeof dynamicIconImports
+  nameIcon: LucideIcon;
   link: string
 }
 
@@ -22,19 +22,19 @@ const Sidebar = () => {
   const pathname = usePathname()
   const sidebarConstanst: SidebarItem[] = [
     {
-      nameIcon: "house",
+      nameIcon: House,
       link: "/",
     },
     {
-      nameIcon: "search",
+      nameIcon: Search,
       link: "/search",
     },
     {
-      nameIcon: "heart",
+      nameIcon: Heart,
       link: "/activity",
     },
     {
-      nameIcon: "user",
+      nameIcon: User,
       link: "/user",
     },
   ]
@@ -48,13 +48,13 @@ const Sidebar = () => {
 
       {/* Menu Icons */}
       <div className="flex flex-col items-center space-y-4">
-        {sidebarConstanst.map(({ nameIcon, link }) => {
+        {sidebarConstanst.map(({ nameIcon: IconComponent, link }) => {
           const isActive =
             pathname === link || (link !== "/" && pathname.startsWith(link))
           return (
             <Link
               href={link}
-              key={nameIcon}
+              key={link}
               className={cn(
                 "cursor-pointer rounded-xl p-4 text-nonative hover:bg-primary-foreground hover:text-foreground",
                 {
@@ -62,7 +62,7 @@ const Sidebar = () => {
                   "bg-transparent": !isActive,
                 },
               )}>
-              <Icon name={nameIcon} size={24} />
+              <IconComponent size={24} />
             </Link>
           )
         })}
@@ -73,7 +73,7 @@ const Sidebar = () => {
         {/* Add footer icons if needed */}
         <DropdownMenu>
           <DropdownMenuTrigger className="cursor-pointer rounded-xl p-4 text-nonative hover:text-foreground focus-visible:outline-0">
-            <Icon name="align-left" size={24} />
+            <AlignLeft size={24} />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="mb-[-16px] ml-6 w-56 rounded-[16px] bg-primary-foreground p-2 text-primary">
             <DropdownMenuItem className="rounded-xl px-2 py-4 text-[15px] font-semibold text-primary hover:bg-secondary">
