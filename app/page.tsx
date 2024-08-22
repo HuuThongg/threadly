@@ -1,6 +1,9 @@
+"use client"
+import { Carousel } from "@/components/carousel";
+import { StartThread } from "@/components/start-thread";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { ChevronDown, Heart } from "lucide-react";
+import { ChevronDown, Ellipsis, Heart, MessageCircle, Repeat2, Send } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -26,12 +29,10 @@ export default function Home() {
                     <Image className="rounded-full" src="/avatar.jpg" alt="logo" width={36} height={36} />
                   </div>
                 </Link>
-                <div className="flex-1 mx-2 pl-1">
-                  <span className="text-nonative cursor-text">Start a thread... </span>
-                </div>
-                <Button variant="outline" className="rounded-xl border-2 border-border scale-100 active:scale-[1.15]"  >Post</Button>
+                <StartThread />
+                <Button variant="outline" className="rounded-xl border-2 border-border scale-100 active:scale-[0.96] font-semibold text-[15px]"  >Post</Button>
               </div>
-              <Separator className="mx-[-24px]" />
+              <Separator className=" mx-[-24px] w-[calc(100%+48px)]" />
             </div>
             {/*Post*/}
             <div className="flex flex-col relative flex-grow">
@@ -45,33 +46,66 @@ export default function Home() {
 
                     </div>
                     <div className="col-start-2 row-start-1 self-start">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          dsad
+                      <div className="flex justify-between ">
+                        <div className="font-medium">
+                          My name
+                          <span className="font-normal pl-1 text-nonative text-[14px]">23h</span>
                         </div>
-                        <div>....</div>
+                        <Button variant="outline" size="icon" className="text-nonative rounded-full self-center border-0 border-none" >
+                          <Ellipsis size={16} />
+                        </Button>
                       </div>
                     </div>
-                    <div className="row-start-2 col-start-2 row-span-2 ">
-                      Mothers, have you "dared" to starve your children before, if your children are lazy to eat, try this way. But first, the moms have to keep the "spirit of steel".
-                      During the main meal, if the child refuses to eat, the moms implement the rule of 3 chances (ask your child 1st time: “Are you seriously sitting down to eat? I sit and eat well" (Or say whatever sentence it is up to you but it should not be forced or obliged)                    </div>
-                    {/* interactino*/}
-                    <div className="col-start-2 row-start-4">
-                      <div className="mt-[6px] ml-[-8px] mb-[-4px]">
-                        <div className="flex relative">
-                          {[...Array(3)].map((_, index) => (
-                            <div className="flex items-center justify-center" key={index}>
-                              <Button variant="outline" size="lg" className="bg-blue-500"  >
-                                <Heart />
-                                <span>617</span>
-                              </Button>
-                            </div>
-                          ))}
+                    <div className="pt-2 row-start-2 col-start-2 row-span-full">
+                      <div className=" tracking-tight text-[15px] font-sans ">
+                        Mothers, have you "dared" to starve your children before, if your children are lazy to eat, try this way. But first, the moms have to keep the "spirit of steel".
+                        During the main meal, if the child refuses to eat, the moms implement the rule of 3 chances (ask your child 1st time: “Are you seriously sitting down to eat? I sit and eat well" (Or say whatever sentence it is up to you but it should not be forced or obliged)
+                      </div>
+                      {/* image caoursel*/}
+                      <div className="pt-2 w-full">
+                        <div className="ml-[-72px] w-[calc(100%+96px)] relative">
+                          <Carousel />
                         </div>
 
                       </div>
+                      {/* interactino*/}
+                      <div className="">
+                        <div className="mt-[6px] ml-[-12px] mb-[4px]">
+                          <div className="flex relative">
+                            <div className="flex items-center justify-center" key={index}>
+                              <Button variant="outline" size="sm" className="px-3 text-ring border-0 border-none hover:bg-neutral-800 rounded-2xl transition duration-200 scale-100 active:scale-[0.87]"  >
+                                <Heart className="text-ring" size={20} strokeWidth={1} />
+                                <span className="text-ring ml-1 font-normal select-none text-[13px] leading-3">617</span>
+                              </Button>
+                            </div>
+                            <div className="flex items-center justify-center" key={index}>
+                              <Button variant="outline" size="sm" className="px-3 text-ring border-0 border-none hover:bg-neutral-800 rounded-2xl transition duration-200 scale-100 active:scale-[0.87]"  >
+                                <MessageCircle className="text-ring" size={20} strokeWidth={1} />
+                                <span className="text-ring ml-1 select-none font-normal text-[13px] leading-3">617</span>
+                              </Button>
+                            </div>
+                            <div className="flex items-center justify-center" key={index}>
+                              <Button variant="outline" size="sm" className="px-3 text-ring border-0 border-none hover:bg-neutral-800 rounded-2xl transition duration-200 scale-100 active:scale-[0.87]"  >
+                                <Repeat2 className="text-ring" size={20} strokeWidth={1} />
+                                <span className="select-none text-ring ml-1 font-normal text-[13px] leading-3">617</span>
+                              </Button>
+                            </div>
+                            <div className="flex items-center justify-center" key={index}>
+                              <Button variant="outline" size="sm" className="px-3 text-ring border-0 border-none hover:bg-neutral-800 rounded-2xl transition duration-200 scale-100 active:scale-[0.87]"  >
+                                <Send className="text-ring" size={20} strokeWidth={1} />
+                                <span className="text-ring ml-1 font-normal text-[13px] leading-3 select-none">617</span>
+                              </Button>
+                            </div>
+
+                          </div>
+
+                        </div>
+                      </div>
+
                     </div>
                   </div>
+
+                  <Separator className=" mx-[-24px] w-[calc(100%+48px)]" />
 
                 </div>
               ))}
