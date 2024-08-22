@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -16,43 +15,57 @@ import { Textarea } from "./ui/textarea"
 
 export function StartThread() {
   return (
-    <Dialog >
+    <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="text-nonative cursor-pointer flex-1 mx-3 pl-1 border-0 border-none focus-visible:outline-0 justify-start ">
+        <Button
+          variant="outline"
+          className="mx-3 flex-1 cursor-pointer justify-start border-0 border-none pl-1 text-nonative focus-visible:outline-0">
           Start a thread ...
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[668px] bg-primary-foreground">
+      <DialogContent className="bg-primary-foreground sm:max-w-[668px]">
         <DialogHeader>
-          <DialogTitle className="text-primary text-center text-[16px]">New Thread</DialogTitle>
+          <DialogTitle className="text-center text-[16px] text-primary">
+            New Thread
+          </DialogTitle>
         </DialogHeader>
-        <div className="relative outline-none cursor-pointer text-primary" >
-          <div className="grid grid-cols-poster grid-rows-poster ">
-            <div className="row-start-1 row-span-2 col-start-1 relative pt-1">
-              <div className="w-9 h-9 rounded-full select-none cursor-pointer bg-neutral-900 ">
-                <Image className="rounded-full" src="/avatar.jpg" alt="logo" width={36} height={36} />
+        <div className="relative cursor-pointer text-primary outline-none">
+          <div className="grid grid-cols-poster grid-rows-poster">
+            <div className="relative col-start-1 row-span-2 row-start-1 pt-1">
+              <div className="h-9 w-9 cursor-pointer select-none rounded-full bg-neutral-900">
+                <Image
+                  className="rounded-full"
+                  src="/avatar.jpg"
+                  alt="logo"
+                  width={36}
+                  height={36}
+                />
               </div>
-
             </div>
             <div className="col-start-2 row-start-1 self-start">
-              <div className="flex justify-between ">
-                <div className="font-medium tracking-tighter">
-                  huuthong
-                </div>
-
+              <div className="flex justify-between">
+                <div className="font-medium tracking-tighter">huuthong</div>
               </div>
             </div>
-            <div className="row-start-2 col-start-2 row-span-full">
-              <div className="pt-1 tracking-tight text-[15px] font-sans ">
-                <Textarea className="bg-transparent focus-visible:outline-none border-0 border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0  " placeholder="Start a thread..." rows={4} />
+            <div className="col-start-2 row-span-full row-start-2">
+              <div className="pt-1 font-sans text-[15px] tracking-tight">
+                <Textarea
+                  className="border-0 border-none bg-transparent p-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                  placeholder="Start a thread..."
+                  rows={4}
+                />
               </div>
             </div>
           </div>
         </div>
-        <DialogFooter className=" justify-between sm:justify-between ">
-          <span className="text-nonative text-[14px]">Any one can reply & quote</span>
-          <Button variant="outline" type="submit" className="rounded-xl border-2 border-border scale-100 active:scale-[0.96] font-semibold text-[15px]"  >Post</Button>
-
+        <DialogFooter className="justify-between sm:justify-between">
+          <span className="text-[14px] text-nonative">Any one can reply & quote</span>
+          <Button
+            variant="outline"
+            type="submit"
+            className="scale-100 rounded-xl border-2 border-border text-[15px] font-semibold active:scale-[0.96]">
+            Post
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
