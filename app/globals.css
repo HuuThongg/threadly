@@ -47,13 +47,14 @@
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 18%;
     --input: 0 0% 18%;
-    --ring: 0 0% 83.1%;
+    --ring: 0 0% 80%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
     --non-active: 0 0% 47%;
+    --radius: 8px;
   }
 
   .dark {
@@ -166,7 +167,7 @@
 }
 
 .ring {
-  color: hsl(0, 0%, 83%);
+  color: hsl(0, 0%, 80%);
 }
 
 .chart-1 {
@@ -187,4 +188,24 @@
 
 .chart-5 {
   color: hsl(340, 75%, 55%);
+}
+
+.smallScrollBar::-webkit-scrollbar {
+  width: 15px;
+}
+.smallScrollBar::-webkit-scrollbar-track {
+  --primary: rebeccapurple;
+  background: transparent;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+.smallScrollBar::-webkit-scrollbar-track:hover {
+  background: #4e4f50;
+}
+.smallScrollBar::-webkit-scrollbar-thumb {
+  --secondary: cornflowerblue;
+  --primary: rebeccapurple;
+  background-color: var(--secondary);
+  border-radius: 14px;
+  border: 3px solid var(--primary);
 }

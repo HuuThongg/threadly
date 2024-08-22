@@ -78,14 +78,14 @@ const config = {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       gridTemplateColumns: {
-        'poster': '48px minmax(0,1fr)',
+        poster: "48px minmax(0,1fr)",
       },
       gridTemplateRows: {
-        'poster': '21px 24px minmax(0,1fr)',
-      }
+        poster: "21px 24px minmax(0,1fr)",
+      },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("tailwind-scrollbar")],
 } satisfies Config
 
 export default config

@@ -14,7 +14,7 @@ import dynamicIconImports from "lucide-react/dynamicIconImports"
 import { AlignLeft, Heart, House, LucideIcon, Search, User } from "lucide-react"
 
 interface SidebarItem {
-  nameIcon: LucideIcon;
+  nameIcon: LucideIcon
   link: string
 }
 
