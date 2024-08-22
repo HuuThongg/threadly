@@ -14,13 +14,13 @@ export default function Home() {
         <div className="flex flex-col py-2">
           <div className="flex h-[60xp] w-full items-center justify-center">
             <div className="flex h-full items-center justify-center space-x-3">
-              <p className="p-2 text-primary">For you</p>
-              <div className="scale-100 cursor-pointer rounded-full border bg-primary-foreground p-1 text-primary hover:scale-110 hover:border-ring">
+              <p className="text-primary p-2">For you</p>
+              <div className="bg-primary-foreground text-primary hover:border-ring scale-100 cursor-pointer rounded-full border p-1 hover:scale-110">
                 <ChevronDown size={20} />
               </div>
             </div>
           </div>
-          <main className="flex flex-col rounded-3xl border border-border bg-primary-foreground text-primary">
+          <main className="border-border bg-primary-foreground text-primary flex flex-col rounded-3xl border">
             {/*Start a thread */}
             <div className="w-full px-6">
               <div className="flex w-full items-center py-4 leading-5">
@@ -42,7 +42,7 @@ export default function Home() {
                 <StartThread />
                 <Button
                   variant="outline"
-                  className="scale-100 rounded-xl border-2 border-border text-[15px] font-semibold active:scale-[0.96]">
+                  className="border-border scale-100 rounded-xl border-2 text-[15px] font-semibold active:scale-[0.96]">
                   Post
                 </Button>
               </div>
@@ -52,9 +52,9 @@ export default function Home() {
             <div className="relative flex flex-grow flex-col">
               {[...Array(5)].map((_, index) => (
                 <div
-                  className="relative cursor-pointer px-6 py-3 text-primary outline-none"
+                  className="text-primary relative cursor-pointer px-6 py-3 outline-none"
                   key={index}>
-                  <div className="grid grid-cols-poster grid-rows-poster">
+                  <div className="grid-cols-poster grid-rows-poster grid">
                     <div className="relative col-start-1 row-span-2 row-start-1 pt-1">
                       <div className="h-9 w-9 cursor-pointer select-none rounded-full bg-neutral-900">
                         <Image
@@ -70,14 +70,14 @@ export default function Home() {
                       <div className="flex justify-between">
                         <div className="font-medium">
                           My name
-                          <span className="pl-1 text-[14px] font-normal text-nonative">
+                          <span className="text-nonative pl-1 text-[14px] font-normal">
                             23h
                           </span>
                         </div>
                         <Button
                           variant="outline"
                           size="icon"
-                          className="self-center rounded-full border-0 border-none text-nonative">
+                          className="text-nonative self-center rounded-full border-0 border-none">
                           <Ellipsis size={16} />
                         </Button>
                       </div>
@@ -106,9 +106,9 @@ export default function Home() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="scale-100 rounded-2xl border-0 border-none px-3 text-ring transition duration-200 hover:bg-neutral-800 active:scale-[0.87]">
+                                className="text-ring scale-100 rounded-2xl border-0 border-none px-3 transition duration-200 hover:bg-neutral-800 active:scale-[0.87]">
                                 <Heart className="text-ring" size={20} strokeWidth={1} />
-                                <span className="ml-1 select-none text-[13px] font-normal leading-3 text-ring">
+                                <span className="text-ring ml-1 select-none text-[13px] font-normal leading-3">
                                   617
                                 </span>
                               </Button>
@@ -117,13 +117,13 @@ export default function Home() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="scale-100 rounded-2xl border-0 border-none px-3 text-ring transition duration-200 hover:bg-neutral-800 active:scale-[0.87]">
+                                className="text-ring scale-100 rounded-2xl border-0 border-none px-3 transition duration-200 hover:bg-neutral-800 active:scale-[0.87]">
                                 <MessageCircle
                                   className="text-ring"
                                   size={20}
                                   strokeWidth={1}
                                 />
-                                <span className="ml-1 select-none text-[13px] font-normal leading-3 text-ring">
+                                <span className="text-ring ml-1 select-none text-[13px] font-normal leading-3">
                                   617
                                 </span>
                               </Button>
@@ -132,26 +132,21 @@ export default function Home() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="scale-100 rounded-2xl border-0 border-none px-3 text-ring transition duration-200 hover:bg-neutral-800 active:scale-[0.87]">
+                                className="text-ring scale-100 rounded-2xl border-0 border-none px-3 transition duration-200 hover:bg-neutral-800 active:scale-[0.87]">
                                 <Repeat2
                                   className="text-ring"
                                   size={20}
                                   strokeWidth={1}
                                 />
-                                <span className="ml-1 select-none text-[13px] font-normal leading-3 text-ring">
+                                <span className="text-ring ml-1 select-none text-[13px] font-normal leading-3">
                                   617
                                 </span>
                               </Button>
                             </div>
                             <div className="flex items-center justify-center" key={index}>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="scale-100 rounded-2xl border-0 border-none px-3 text-ring transition duration-200 hover:bg-neutral-800 active:scale-[0.87]">
-                                <Send className="text-ring" size={20} strokeWidth={1} />
-                                <span className="ml-1 select-none text-[13px] font-normal leading-3 text-ring">
-                                  617
-                                </span>
+                              <Button variant="outline" size="lg" className="bg-blue-500">
+                                <Heart />
+                                <span>617</span>
                               </Button>
                             </div>
                           </div>
