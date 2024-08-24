@@ -14,13 +14,13 @@ export default function Home() {
         <div className="flex flex-col py-2">
           <div className="flex h-[60xp] w-full items-center justify-center">
             <div className="flex h-full items-center justify-center space-x-3">
-              <p className="text-primary p-2">For you</p>
-              <div className="bg-primary-foreground text-primary hover:border-ring scale-100 cursor-pointer rounded-full border p-1 hover:scale-110">
+              <p className="p-2 text-primary">For you</p>
+              <div className="scale-100 cursor-pointer rounded-full border bg-primary-foreground p-1 text-primary hover:scale-110 hover:border-ring">
                 <ChevronDown size={20} />
               </div>
             </div>
           </div>
-          <main className="border-border bg-primary-foreground text-primary flex flex-col rounded-3xl border">
+          <main className="flex flex-col rounded-3xl border border-border bg-primary-foreground text-primary">
             {/*Start a thread */}
             <div className="w-full px-6">
               <div className="flex w-full items-center py-4 leading-5">
@@ -42,19 +42,19 @@ export default function Home() {
                 <StartThread />
                 <Button
                   variant="outline"
-                  className="border-border scale-100 rounded-xl border-2 text-[15px] font-semibold active:scale-[0.96]">
+                  className="scale-100 rounded-xl border-2 border-border text-[15px] font-semibold active:scale-[0.96]">
                   Post
                 </Button>
               </div>
               <Separator className="mx-[-24px] w-[calc(100%+48px)]" />
             </div>
             {/*Post*/}
-            <div className="relative flex flex-grow flex-col">
+            <div className="relative flex flex-col">
               {[...Array(5)].map((_, index) => (
                 <div
-                  className="text-primary relative cursor-pointer px-6 py-3 outline-none"
+                  className="relative cursor-pointer px-6 py-3 text-primary outline-none"
                   key={index}>
-                  <div className="grid-cols-poster grid-rows-poster grid">
+                  <div className="grid grid-cols-poster grid-rows-poster">
                     <div className="relative col-start-1 row-span-2 row-start-1 pt-1">
                       <div className="h-9 w-9 cursor-pointer select-none rounded-full bg-neutral-900">
                         <Image
@@ -70,27 +70,25 @@ export default function Home() {
                       <div className="flex justify-between">
                         <div className="font-medium">
                           My name
-                          <span className="text-nonative pl-1 text-[14px] font-normal">
+                          <span className="pl-1 text-[14px] font-normal text-nonative">
                             23h
                           </span>
                         </div>
                         <Button
                           variant="outline"
                           size="icon"
-                          className="text-nonative self-center rounded-full border-0 border-none">
+                          className="self-center rounded-full border-0 border-none text-nonative">
                           <Ellipsis size={16} />
                         </Button>
                       </div>
                     </div>
                     <div className="col-start-2 row-span-full row-start-2 pt-2">
                       <div className="font-sans text-[15px] tracking-tight">
-                        Mothers, have you "dared" to starve your children before, if your
-                        children are lazy to eat, try this way. But first, the moms have
-                        to keep the "spirit of steel". During the main meal, if the child
-                        refuses to eat, the moms implement the rule of 3 chances (ask your
-                        child 1st time: “Are you seriously sitting down to eat? I sit and
-                        eat well" (Or say whatever sentence it is up to you but it should
-                        not be forced or obliged)
+                        Use this extension for declaration files that only contain type
+                        definitions. These files are meant to describe the shape of code
+                        written in JavaScript or TypeScript for use with TypeScript
+                        projects. They dont contain any executable code, just type
+                        declarations
                       </div>
                       {/* image caoursel*/}
                       <div className="w-full pt-2">
@@ -106,9 +104,9 @@ export default function Home() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="text-ring scale-100 rounded-2xl border-0 border-none px-3 transition duration-200 hover:bg-neutral-800 active:scale-[0.87]">
+                                className="scale-100 rounded-2xl border-0 border-none px-3 text-ring transition duration-200 hover:bg-neutral-800 active:scale-[0.87]">
                                 <Heart className="text-ring" size={20} strokeWidth={1} />
-                                <span className="text-ring ml-1 select-none text-[13px] font-normal leading-3">
+                                <span className="ml-1 select-none text-[13px] font-normal leading-3 text-ring">
                                   617
                                 </span>
                               </Button>
@@ -117,13 +115,13 @@ export default function Home() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="text-ring scale-100 rounded-2xl border-0 border-none px-3 transition duration-200 hover:bg-neutral-800 active:scale-[0.87]">
+                                className="scale-100 rounded-2xl border-0 border-none px-3 text-ring transition duration-200 hover:bg-neutral-800 active:scale-[0.87]">
                                 <MessageCircle
                                   className="text-ring"
                                   size={20}
                                   strokeWidth={1}
                                 />
-                                <span className="text-ring ml-1 select-none text-[13px] font-normal leading-3">
+                                <span className="ml-1 select-none text-[13px] font-normal leading-3 text-ring">
                                   617
                                 </span>
                               </Button>
@@ -132,13 +130,13 @@ export default function Home() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="text-ring scale-100 rounded-2xl border-0 border-none px-3 transition duration-200 hover:bg-neutral-800 active:scale-[0.87]">
+                                className="scale-100 rounded-2xl border-0 border-none px-3 text-ring transition duration-200 hover:bg-neutral-800 active:scale-[0.87]">
                                 <Repeat2
                                   className="text-ring"
                                   size={20}
                                   strokeWidth={1}
                                 />
-                                <span className="text-ring ml-1 select-none text-[13px] font-normal leading-3">
+                                <span className="ml-1 select-none text-[13px] font-normal leading-3 text-ring">
                                   617
                                 </span>
                               </Button>
