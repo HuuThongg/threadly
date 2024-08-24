@@ -14,7 +14,7 @@ export default function SearchPage() {
           </div>
 
           <div>
-            <main className="bg-primary-foreground border-border flex flex-col rounded-3xl border p-6">
+            <main className="flex flex-col rounded-3xl border border-border bg-primary-foreground p-6">
               <div className="mb-4 flex flex-row">
                 <Search size={24} />
                 <Input
@@ -31,7 +31,7 @@ export default function SearchPage() {
               {[...Array(15)].map((_, index) => (
                 <div className="flex flex-col" key={index}>
                   <div className="flex w-full flex-row py-4">
-                    <div className="border-border size-9 scale-100 cursor-pointer select-none rounded-full pt-1">
+                    <div className="size-9 scale-100 cursor-pointer select-none rounded-full border-border pt-1">
                       <Image
                         className="rounded-full"
                         src="/avatar.jpg"
@@ -44,12 +44,12 @@ export default function SearchPage() {
                       <div className="flex flex-col">
                         <h1 className="text-primary">salimhwg</h1>
                         <p>Salim</p>
-                        <p className="text-primary pt-1">418K followers</p>
+                        <p className="pt-1 text-primary">418K followers</p>
                       </div>
                       <div className="flex items-center">
                         <Button
                           variant="outline"
-                          className="border-border scale-100 rounded-xl border-2 active:scale-[1.15]">
+                          className="scale-100 rounded-xl border-2 border-border active:scale-[1.15]">
                           Follow
                         </Button>
                       </div>
