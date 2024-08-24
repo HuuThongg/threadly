@@ -16,7 +16,10 @@ CREATE TABLE users
   name VARCHAR(255),
   email VARCHAR(255) UNIQUE,
   "emailVerified" TIMESTAMPTZ,
-  image TEXT
+  image TEXT,
+  bio TEXT,
+  gender TEXT,
+  onboarding_complete BOOLEAN DEFAULT FALSE
 );
 -- Users table indexes
 CREATE INDEX idx_users_email ON users(email);
@@ -86,20 +89,20 @@ CREATE INDEX idx_mentions_commentId ON mentions("commentId");
 CREATE INDEX idx_mentions_mentionUserId ON mentions("mentionUserId");
 
 
-CREATE IF NOT EXISTS TABLE comments
+create if not exists table comments
 (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  "postId" UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
-  "userId" UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
-  content TEXT,
-  "parent_comment_id" UUID REFERENCES comments(id) ON DELETE CASCADE,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
+  id uuid default uuid_generate_v4() primary key,
+  "postid" uuid not null references posts(id) on delete cascade,
+  "userid" uuid not null references posts(id) on delete cascade,
+  content text,
+  "parent_comment_id" uuid references comments(id) on delete cascade,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
 );
--- Comments table indexes
-CREATE INDEX idx_comments_postId ON comments("postId");
-CREATE INDEX idx_comments_userId ON comments("userId");
-CREATE INDEX idx_comments_parent_comment_id ON comments("parent_comment_id");
+-- comments table indexes
+create index idx_comments_postid on comments("postid");
+create index idx_comments_userid on comments("userid");
+create index idx_comments_parent_comment_id on comments("parent_comment_id");
 
 
 

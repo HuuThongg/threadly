@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import dynamicIconImports from "lucide-react/dynamicIconImports"
 import { AlignLeft, Heart, House, LucideIcon, Search, User } from "lucide-react"
 
 interface SidebarItem {

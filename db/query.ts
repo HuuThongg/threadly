@@ -1,4 +1,5 @@
 import { pool } from "."
+import { v4 as uuidv4 } from "uuid"
 
 export async function getFolloweredUserPosts(userId: string) {
   const query = `
@@ -249,6 +250,39 @@ export async function createComment({
     await client.query("ROLLBACK")
     console.error("Error creating comment", error)
     throw new Error("Failed to create comment")
+  } finally {
+    client.release()
+  }
+}
+
+interface OnboardingData {
+  userId: string
+  handle: string
+  bio?: string
+  profileImage?: File
+}
+
+export async function completeOnboarding(data: OnboardingData): Promise<void> {
+  const { userId, handle, bio, profileImage } = data
+
+  let profileImageUrl: string | null = null
+
+  if (profileImage) {
+    // Handle file upload (e.g., save to S3, filesystem)
+    const imageFilename = `${uuidv4()}_${profileImage.name}`
+    // Save the file and get the URL (implementation depends on your setup)
+    // Example: Upload file to S3 and get URL
+    profileImageUrl = `/path/to/images/${imageFilename}`
+  }
+
+  const client = await pool.connect()
+  try {
+    await client.query(
+      `UPDATE users
+       SET handle = $1, bio = $2, profile_image_url = $3, onboarding_complete = TRUE
+       WHERE id = $4`,
+      [handle, bio || null, profileImageUrl || null, userId],
+    )
   } finally {
     client.release()
   }

@@ -1,9 +1,10 @@
+"use client"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Facebook, Github } from "lucide-react"
+import { Chrome, Github } from "lucide-react"
 import { signIn } from "next-auth/react"
 
-export const Social = () => {
+export function Social() {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl")
   console.log("callbackUrl", callbackUrl)
@@ -11,23 +12,23 @@ export const Social = () => {
     signIn(provider, {
       callbackUrl: callbackUrl || "/",
     })
-    return (
-      <div className="flex w-full items-center gap-x-2">
-        <Button
-          size="lg"
-          className="w-full"
-          variant="outline"
-          onClick={() => onClick("google")}>
-          <Facebook className="h-5 w-5" />
-        </Button>
-        <Button
-          size="lg"
-          className="w-full"
-          variant="outline"
-          onClick={() => onClick("github")}>
-          <Github className="h-5 w-5" />
-        </Button>
-      </div>
-    )
   }
+  return (
+    <div className="mt-10 flex w-full flex-col items-center gap-y-2">
+      <Button
+        size="lg"
+        className="w-full"
+        variant="outline"
+        onClick={() => onClick("google")}>
+        <Chrome className="h-5 w-5" />
+      </Button>
+      <Button
+        size="lg"
+        className="w-full"
+        variant="outline"
+        onClick={() => onClick("github")}>
+        <Github className="h-5 w-5" />
+      </Button>
+    </div>
+  )
 }
