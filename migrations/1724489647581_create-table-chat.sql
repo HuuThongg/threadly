@@ -15,7 +15,8 @@ CREATE INDEX idx_chats_groupId ON chats("groupId");
 
 -- Down Migration
 
-DROP TABLE IF EXISTS chats;
 DROP INDEX IF EXISTS idx_chats_senderId;
 DROP INDEX IF EXISTS idx_chats_receiverId;
 DROP INDEX IF EXISTS idx_chats_groupId;
+
+DROP TABLE IF EXISTS chats;

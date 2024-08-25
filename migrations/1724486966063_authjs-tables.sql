@@ -13,10 +13,10 @@ CREATE TABLE IF NOT EXISTS verification_token
 CREATE TABLE IF NOT EXISTS users
 (
  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  handle VARCHAR(255) UNIQUE NOT NULL,
+  handle VARCHAR(255) UNIQUE  NULL,
   name VARCHAR(255),
   email VARCHAR(255) UNIQUE,
-  emailVerified TIMESTAMPTZ,
+  "emailVerified" TIMESTAMPTZ,
   image TEXT,
   bio TEXT,
   gender TEXT,
@@ -30,10 +30,10 @@ CREATE INDEX idx_users_handle ON users(handle);
 CREATE TABLE IF NOT EXISTS accounts
 (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  userId UUID NOT NULL REFERENCES users(id),
+  "userId" UUID NOT NULL REFERENCES users(id),
   type VARCHAR(255) NOT NULL,
   provider VARCHAR(255) NOT NULL,
-  providerAccountId VARCHAR(255) NOT NULL,
+  "providerAccountId" VARCHAR(255) NOT NULL,
   refresh_token TEXT,
   access_token TEXT,
   expires_at BIGINT,
@@ -46,9 +46,9 @@ CREATE TABLE IF NOT EXISTS accounts
 CREATE TABLE IF NOT EXISTS  sessions
 (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  userId UUID NOT NULL REFERENCES users(id),
+  "userId" UUID NOT NULL REFERENCES users(id),
   expires TIMESTAMPTZ NOT NULL,
-  sessionToken VARCHAR(255) NOT NULL UNIQUE
+  "sessionToken" VARCHAR(255) NOT NULL UNIQUE
 );
 
 

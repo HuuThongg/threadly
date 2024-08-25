@@ -16,7 +16,8 @@ CREATE INDEX idx_likes_commentId ON likes("commentId");
 CREATE INDEX idx_likes_userId ON likes("userId");
 -- Down Migration
 
-DROP TABLE IF EXISTS likes;
 DROP INDEX IF EXISTS idx_likes_postId;
 DROP INDEX IF EXISTS idx_likes_commentId;
 DROP INDEX IF EXISTS idx_likes_userId;
+
+DROP TABLE IF EXISTS likes;

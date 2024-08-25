@@ -27,9 +27,11 @@ CREATE INDEX idx_mentions_mentionUserId ON mentions("mentionUserId");
 
 
 -- Down Migration
-DROP TABLE IF EXISTS comments;
 DROP INDEX IF EXISTS idx_comments_userid;
 DROP INDEX IF EXISTS idx_comments_postid;
 DROP INDEX IF EXISTS idx_comments_parent_comment_id;
 DROP INDEX IF EXISTS idx_mentions_commentId;
 DROP INDEX IF EXISTS idx_mentions_mentionUserId;
+
+DROP TABLE IF EXISTS mentions;
+DROP TABLE IF EXISTS comments;

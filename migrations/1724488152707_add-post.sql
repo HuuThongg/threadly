@@ -21,8 +21,9 @@ CREATE TABLE IF NOT EXISTS  post_images
 CREATE INDEX idx_post_images_postId ON post_images("postId");
 
 -- Down Migration
-DROP TABLE IF EXISTS posts;
-DROP TABLE IF EXISTS post_images;
 
 DROP INDEX IF EXISTS idx_posts_userId;
 DROP INDEX IF EXISTS idx_post_images_postId;
+
+DROP TABLE IF EXISTS post_images;
+DROP TABLE IF EXISTS posts;

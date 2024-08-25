@@ -15,3 +15,5 @@ CREATE INDEX idx_reposts_userId ON reposts("userId");
 -- Down Migration
 DROP INDEX IF EXISTS idx_reposts_originalPostId;
 DROP INDEX IF EXISTS idx_reposts_userId;
+
+DROP TABLE IF EXISTS reposts;

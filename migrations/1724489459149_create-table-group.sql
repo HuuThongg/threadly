@@ -23,8 +23,9 @@ CREATE INDEX idx_group_members_userId ON group_members("userId");
 
 -- Down Migration
 
-DROP TABLE IF EXISTS groups;
 DROP INDEX IF EXISTS idx_groups_name;
-DROP TABLE IF EXISTS group_members;
 DROP INDEX IF EXISTS idx_group_members_userId;
 DROP INDEX IF EXISTS idx_group_members_groupId;
+
+DROP TABLE IF EXISTS group_members;
+DROP TABLE IF EXISTS groups;

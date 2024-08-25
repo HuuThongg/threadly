@@ -23,6 +23,26 @@ export async function getFolloweredUserPosts(userId: string) {
   }
 }
 
+export async function updateEmailVerified(userId: string) {
+  const query = `
+    UPDATE users
+    SET "emailVerified" = NOW()
+    WHERE userId = $1;
+  `;
+  const values = [userId];
+
+  const client = await pool.connect()
+  try {
+    const res = await client.query(query, values)
+    return res.rows
+  } catch (error) {
+    console.error("Error executing query", error)
+    throw new Error("Failed to fetch posts from the database")
+  } finally {
+    client.release()
+  }
+}
+
 export async function getPostById(postId: string) {
   const query = `
     SELECT * 

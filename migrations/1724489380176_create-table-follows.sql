@@ -12,6 +12,7 @@ CREATE INDEX idx_follows_followerId ON follows("followerId");
 CREATE INDEX idx_follows_followingId ON follows("followingId");
 -- Down Migration
 
-DROP TABLE IF EXISTS follows;
 DROP INDEX IF EXISTS idx_follows_followingId;
 DROP INDEX IF EXISTS idx_follows_followerId;
+
+DROP TABLE IF EXISTS follows;
