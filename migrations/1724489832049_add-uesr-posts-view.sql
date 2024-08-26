@@ -1,17 +1,32 @@
 -- Up Migration
+
 CREATE OR REPLACE VIEW user_posts_view AS
 SELECT 
   p.id AS post_id,
   p."userId" AS user_id,
-  u.handle as user_handle,
+  u.handle AS user_handle,
+  u.name AS user_name,
+  u.image AS user_image,
   p.content,
   p.created_at,
-  (SELECT count(*) FROM likes l where l."postId" = p.id) AS like_count,
-  (SELECT count(*) FROM reposts r WHERE r."originalPostId" = p.id) AS repost_count
+  (SELECT count(*)::int FROM likes l WHERE l."postId" = p.id) AS like_count,
+  (SELECT count(*)::int FROM reposts r WHERE r."originalPostId" = p.id) AS repost_count,
+  (SELECT count(*)::int FROM comments c WHERE c."postId" = p.id) as comment_count,
+  -- Aggregate images as a JSON array
+  COALESCE(json_agg(
+    json_build_object(
+      'image_url', pi.image_url,
+      'blurHash', pi."blurHash"
+    )
+  ) FILTER (WHERE pi.image_url IS NOT NULL), '[]') AS images
 FROM 
   posts p 
 JOIN
-  users u on p."userId" = u.id;
+  users u ON p."userId" = u.id
+LEFT JOIN
+  post_images pi ON p.id = pi."postId"
+GROUP BY
+  p.id, u.handle, u.name, u.image, p.content, p.created_at;
 -- Down Migration
 
 DROP VIEW IF EXISTS user_posts_view;

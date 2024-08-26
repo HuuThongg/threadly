@@ -5,8 +5,9 @@ import { Ellipsis } from "lucide-react"
 import { Carousel } from "../carousel"
 import { PostInteraction } from "../post-interaction"
 import { Separator } from "@/components/ui/separator"
+import { UserPostView } from "@/types"
 
-export function Post() {
+export function Post({ postInfo }: { postInfo: UserPostView }) {
   return (
 
     <div
@@ -17,8 +18,8 @@ export function Post() {
           <div className="h-9 w-9 cursor-pointer select-none rounded-full bg-neutral-900">
             <Image
               className="rounded-full"
-              src="/avatar.jpg"
-              alt="logo"
+              src={`${postInfo.user_image ?? "/defaultAvatar.jgp"}`}
+              alt={`Avatar of ${postInfo.user_name}`}
               width={36}
               height={36}
             />
@@ -42,20 +43,19 @@ export function Post() {
         </div>
         <div className="col-start-2 row-span-full row-start-2 pt-2">
           <div className="font-sans text-[15px] tracking-tight">
-            Use this extension for declaration files that only contain type
-            definitions. These files are meant to describe the shape of code
-            written in JavaScript or TypeScript for use with TypeScript
-            projects. They dont contain any executable code, just type
-            declarations
-          </div>
+            {postInfo.content ?? ""}          </div>
           {/* image caoursel*/}
-          <div className="w-full pt-2">
-            <div className="relative ml-[-72px] w-[calc(100%+96px)]">
-              <Carousel />
-            </div>
-          </div>
+          {postInfo.images.length > 1 &&
+            (
+              <div className="w-full pt-2">
+                <div className="relative ml-[-72px] w-[calc(100%+96px)]">
+                  <Carousel postImages={postInfo.images} />
+                </div>
+              </div>
+            )
+          }
           {/* interactino*/}
-          <PostInteraction />
+          <PostInteraction postId={postInfo.post_id} like_count={postInfo.like_count} comment_count={postInfo.comment_count} repost_count={postInfo.repost_count} />
         </div>
       </div>
 

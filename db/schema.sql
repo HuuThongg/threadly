@@ -5,7 +5,7 @@ CREATE TABLE verification_token
   identifier TEXT NOT NULL,
   expires TIMESTAMPTZ NOT NULL,
   token TEXT NOT NULL,
-  
+
   PRIMARY KEY(identifier, token)
 );
 
@@ -92,16 +92,16 @@ CREATE INDEX idx_mentions_mentionUserId ON mentions("mentionUserId");
 create if not exists table comments
 (
   id uuid default uuid_generate_v4() primary key,
-  "postid" uuid not null references posts(id) on delete cascade,
-  "userid" uuid not null references posts(id) on delete cascade,
+  "postId" uuid not null references posts(id) on delete cascade,
+  "userId" uuid not null references posts(id) on delete cascade,
   content text,
   "parent_comment_id" uuid references comments(id) on delete cascade,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
 -- comments table indexes
-create index idx_comments_postid on comments("postid");
-create index idx_comments_userid on comments("userid");
+create index idx_comments_postid on comments("postId");
+create index idx_comments_userid on comments("userId");
 create index idx_comments_parent_comment_id on comments("parent_comment_id");
 
 

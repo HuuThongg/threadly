@@ -3,7 +3,7 @@ import Posts from "@/components/post"
 import { StartThread } from "@/components/start-thread"
 import { ChevronDown } from "lucide-react"
 
-export default async function Home() {
+export default async function HomePage() {
   const session = await auth();
   console.log("sesson from home page", session)
   return (

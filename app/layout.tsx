@@ -26,6 +26,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const session = await auth();
+  console.log('uesr session id ', session?.user?.id)
   return (
     <Provider>
       <html lang="en">
@@ -36,9 +37,7 @@ export default async function RootLayout({
           )}>
           <div className="flex">
             <SideBar />
-            <div className="flex px-5 min-h-screen flex-1 flex-col items-center justify-between">
-              {children}
-            </div>
+            {children}
           </div>
           {session !== null && session?.user ? (
 

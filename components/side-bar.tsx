@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { AlignLeft, Heart, House, LucideIcon, Search, User } from "lucide-react"
+import { AlignLeft, Heart, House, LucideIcon, MessageSquare, Search, User } from "lucide-react"
 import { useSession, signOut, signIn } from "next-auth/react"
 
 interface SidebarItem {
@@ -28,6 +28,10 @@ const Sidebar = () => {
     {
       nameIcon: Search,
       link: "/search",
+    },
+    {
+      nameIcon: MessageSquare,
+      link: "/messages/direct"
     },
     {
       nameIcon: Heart,

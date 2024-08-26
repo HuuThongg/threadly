@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS  post_images
 (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   "postId" UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
-  image_url TEXT NOT NULL
+  image_url TEXT NOT NULL,
+  "blurHash" TEXT NOT NULL
 );
 -- Post Images table indexes
 CREATE INDEX idx_post_images_postId ON post_images("postId");

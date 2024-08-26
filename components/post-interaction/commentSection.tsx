@@ -6,41 +6,28 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Textarea } from "./ui/textarea"
-import { ImageCarousel } from "./create-post/imageCarousel"
+import { Textarea } from "@/components/ui/textarea"
+import { ImageCarousel } from "@/components/create-post/imageCarousel"
 import { ImageUp } from "lucide-react"
 import { useCallback, useRef, useState } from "react"
 import { useSession } from 'next-auth/react';
-import { useToast } from './ui/use-toast';
-import { useSetAtom } from 'jotai';
-import { isThreadPostOpenedAtom } from '@/jotai';
+import { useToast } from '@/components/ui/use-toast';
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormField, FormItem } from './ui/form';
+import { Form, FormField, FormItem } from '@/components/ui/form';
 import { SelectedFile } from '@/schema';
+import { postFormSchema } from '../thread-content';
 
 
-//const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-export const postFormSchema = z.object({
-  content: z.string().optional(),
-  //images: z.instanceof(FileList).optional(),
+export function CommentSection({ setOpen }: { setOpen: (arg: boolean) => void }) {
 
-  images: z.unknown().transform(value => {
-    return value as FileList
-  }).optional(),
-})
-
-
-export function ThreadContent() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [selectedFiles, setSelectedFiles] = useState<SelectedFile[]>([]);
   const [content, setContent] = useState("")
   const { toast } = useToast()
   const session = useSession()
-  const setOpen = useSetAtom(isThreadPostOpenedAtom)
-
 
   function selectImage() {
     if (fileInputRef.current) {
@@ -112,8 +99,6 @@ export function ThreadContent() {
     }
   }
 
-
-
   const onFileChange = useCallback((e: React.FormEvent<HTMLInputElement>) => {
     const files = e.currentTarget.files;
     if (!files) return;
@@ -138,21 +123,30 @@ export function ThreadContent() {
     });
   }, [selectedFiles]);
 
-
   const handleDelete = (index: number) => {
     setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
-
-
-
   return (
-
     <DialogContent className="bg-primary-foreground sm:max-w-[668px]">
       <DialogHeader>
         <DialogTitle className="text-center text-[16px] text-primary">
-          New Thread
+          Reply
         </DialogTitle>
       </DialogHeader>
+      <div className='flex  items-center gap-x-3'>
+        <div className="h-9 w-9 cursor-pointer select-none rounded-full bg-neutral-900">
+          <NextImage
+            className="rounded-full"
+            src={session?.data?.user?.image || "/defaultAvatar.jpg"}
+            alt="logo"
+            width={36}
+            height={36}
+          />
+        </div>
+        <div className="flex justify-between">
+          <div className="font-medium tracking-tighter text-primary">huuthong</div>
+        </div>
+      </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
 
@@ -183,7 +177,6 @@ export function ThreadContent() {
 
                           <ImageCarousel fileObj={selectedFiles} onDelete={handleDelete} />
                         }
-
                       </div>
                       <div className='pt-1'>
                         <div className="rounded-full p-3 bg-transparent hover:bg-transparent active:bg-transparent text-nonative group/add -ml-3 focus-visible:ring-0 focus-visible:ring-offset-0 flex cursor-pointer" onClick={selectImage}>
@@ -215,7 +208,7 @@ export function ThreadContent() {
                     <div className="pt-1 font-sans text-[15px] tracking-tight">
                       <Textarea
                         className="border-0 border-none bg-transparent p-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                        placeholder="Start a thread..."
+                        placeholder="Replying to"
                         rows={4}
                         {...field}
                       />
@@ -241,4 +234,3 @@ export function ThreadContent() {
     </DialogContent >
   )
 }
-

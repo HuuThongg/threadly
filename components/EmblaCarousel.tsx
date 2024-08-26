@@ -1,15 +1,9 @@
-import React, { useEffect } from "react"
 import useEmblaCarousel from "embla-carousel-react"
-import { EmblaOptionsType } from "embla-carousel"
 import Image from "next/image"
-type PropType = {
-  slides: number[]
-  options?: EmblaOptionsType
-}
+import { PostImage } from "@/types"
 
-const EmblaCarousel: React.FC<PropType> = (props) => {
-  const { slides, options } = props
-  const [emblaRef, emblaApi] = useEmblaCarousel(options)
+const EmblaCarousel = ({ postImages }: { postImages: PostImage[] }) => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ dragFree: true })
 
   return (
     <section className="m-auto max-w-full">
@@ -18,7 +12,7 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
           <div
             className="min-w-0shrink-0 flex grow-0 space-x-1 pl-[calc(48px+24px)]"
             style={{ transform: "translate3d(0,0,0)" }}></div>
-          {slides.map((index) => (
+          {postImages.map(({ image_url, blurHash }, index) => (
             <div
               className="flex min-w-0 shrink-0 grow-0 basis-[34%]"
               style={{ transform: "translate3d(0,0,0)" }}

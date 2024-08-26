@@ -1,3 +1,4 @@
+import { UserPostView } from "@/types"
 import { pool } from "."
 import { v4 as uuidv4 } from "uuid"
 
@@ -20,6 +21,19 @@ export async function getFolloweredUserPosts(userId: string) {
     throw new Error("Failed to fetch posts from the database")
   } finally {
     client.release()
+  }
+}
+
+export async function getPosts(): Promise<UserPostView[]> {
+  const query = `
+    SELECT  *  FROM user_posts_view;
+  `;
+  const client = await pool.connect();
+  try {
+    const res = await client.query(query)
+    return res.rows as UserPostView[]
+  } catch (error) {
+    throw new Error("failed to fetch user_posts_view")
   }
 }
 
@@ -189,12 +203,18 @@ export async function getFollowingCount(userId: string) {
 
 interface CreatePostParams {
   userId: string // ID of the user creating the post
-  content: string // Content of the post
+  content?: string // Content of the post
   images?: string[] // Optional array of image URLs
+  blurHashes?: string[]
 }
 
-export async function createPost({ userId, content, images }: CreatePostParams) {
+export async function createPost({ userId, content, images, blurHashes }: CreatePostParams) {
   const client = await pool.connect()
+  if (!content && !images && !blurHashes) {
+
+    throw new Error("Failed to create post")
+  }
+
   try {
     // Start a transaction
     await client.query("BEGIN")
@@ -210,14 +230,22 @@ export async function createPost({ userId, content, images }: CreatePostParams) 
     const postId = postResult.rows[0].id
 
     // Insert the post images if they exist
-    if (images && images.length > 0) {
+
+    // Insert the post images and blurhashes if they exist
+    if (images && images.length > 0 && blurHashes && blurHashes.length > 0) {
       const imageInsertQuery = `
-        INSERT INTO post_images (postId, image_url)
-        VALUES ${images.map((_, index) => `($1, $${index + 2})`).join(", ")}
-      `
-      const imageValues = [postId, ...images]
-      await client.query(imageInsertQuery, imageValues)
+    INSERT INTO post_images ("postId", image_url, "blurHash")
+    VALUES ${images.map((_, index) => `($1, $${index * 2 + 2}, $${index * 2 + 3})`).join(", ")}
+  `;
+      const imageValues = [postId];
+
+      images.forEach((imageUrl, index) => {
+        imageValues.push(imageUrl, blurHashes[index]);
+      });
+
+      await client.query(imageInsertQuery, imageValues);
     }
+
 
     // Commit the transaction
     await client.query("COMMIT")
