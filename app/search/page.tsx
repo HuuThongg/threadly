@@ -15,37 +15,38 @@ export default function SearchPage() {
           </div>
 
           <div>
-            <main className="flex flex-col rounded-3xl border border-border bg-primary-foreground p-6">
-              <div className="mb-4 flex flex-row">
-                <Search size={24} />
+            <main className="bg-primary-foreground border-border flex flex-col rounded-3xl border p-6">
+              <div className="border-border bg-background mb-4 flex flex-row items-center space-x-1 rounded-2xl border-[1px] pl-4">
+                <Search size={22} />
                 <Input
-                  type="search"
+                  type=""
                   placeholder="Search"
-                  className="focus-visible:outline-0"
+                  className="text-primary rounded-none border-0 border-none bg-transparent shadow-none focus-visible:border-0 focus-visible:border-none focus-visible:outline-none focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                 />
               </div>
 
-              <div>
-                <span className="pt-6">Follows suggestions</span>
+              <div className="text-nonative py-3">
+                <p>Follows suggestions</p>
               </div>
 
               {[...Array(15)].map((_, index) => (
                 <div className="flex flex-col" key={index}>
-                  <div className="flex w-full flex-row py-4">
-                    <div className="size-9 scale-100 cursor-pointer select-none rounded-full border-border pt-1">
+                  <div className="flex w-full flex-row py-3">
+                    <div className="border-border mt-1 size-9 scale-100 cursor-pointer select-none overflow-hidden rounded-full">
                       <Image
-                        className="rounded-full"
-                        src="/avatar.jpg"
+                        className="aspect-square w-full rounded-full object-cover"
+                        src="/ngan.jpg"
                         alt="logo"
                         width={36}
                         height={36}
                       />
                     </div>
+
                     <div className="ml-3 flex flex-1 flex-row justify-between">
                       <div className="flex flex-col">
                         <h1 className="text-primary">salimhwg</h1>
-                        <p>Salim</p>
-                        <p className="pt-1 text-primary">418K followers</p>
+                        <p className="text-nonative">Salim</p>
+                        <p className="text-primary pt-1">418K followers</p>
                       </div>
                       <div className="flex items-center">
                         <Button
