@@ -19,18 +19,18 @@ export function StartThread() {
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="mx-3 flex-1 cursor-pointer justify-start border-0 border-none pl-1 text-nonative focus-visible:outline-0">
+          className="text-nonative mx-3 flex-1 cursor-pointer justify-start border-0 border-none pl-1 focus-visible:outline-0">
           Start a thread ...
         </Button>
       </DialogTrigger>
       <DialogContent className="bg-primary-foreground sm:max-w-[668px]">
         <DialogHeader>
-          <DialogTitle className="text-center text-[16px] text-primary">
+          <DialogTitle className="text-primary text-center text-[16px]">
             New Thread
           </DialogTitle>
         </DialogHeader>
-        <div className="relative cursor-pointer text-primary outline-none">
-          <div className="grid grid-cols-poster grid-rows-poster">
+        <div className="text-primary relative cursor-pointer outline-none">
+          <div className="grid-cols-poster grid-rows-poster grid">
             <div className="relative col-start-1 row-span-2 row-start-1 pt-1">
               <div className="h-9 w-9 cursor-pointer select-none rounded-full bg-neutral-900">
                 <Image
@@ -59,11 +59,11 @@ export function StartThread() {
           </div>
         </div>
         <DialogFooter className="justify-between sm:justify-between">
-          <span className="text-[14px] text-nonative">Any one can reply & quote</span>
+          <span className="text-nonative text-[14px]">Any one can reply & quote</span>
           <Button
             variant="outline"
             type="submit"
-            className="scale-100 rounded-xl border-2 border-border text-[15px] font-semibold active:scale-[0.96]">
+            className="border-border scale-100 rounded-xl border-2 text-[15px] font-semibold active:scale-[0.96]">
             Post
           </Button>
         </DialogFooter>

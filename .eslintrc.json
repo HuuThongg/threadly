@@ -3,7 +3,9 @@
   "plugins": ["prettier", "tailwindcss"],
   "rules": {
     "tailwindcss/no-custom-classname": "off",
-    "tailwindcss/classnames-order": "off"
+    "tailwindcss/classnames-order": "off",
+    "tailwindcss/no-unnecessary-arbitrary-value": "off",
+    "tailwindcss/enforces-shorthand": "off"
   },
   "settings": {
     "tailwindcss": {
