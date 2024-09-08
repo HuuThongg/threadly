@@ -39,13 +39,26 @@ export type Follow = {
   followerId: string // Foreign key to User
   followingId: string // Foreign key to User
 }
-
-export type UserPostsView = {
+export type PostImage = {
+  image_url: string
+  blurHash: string
+}
+export type UserPostView = {
   post_id: string // Post ID
   user_id: string // User ID
   user_handle: string // User handle from the users table
+  user_name: string
+  user_image: string
   content: string // Post content
   created_at: Date // Post creation date
   like_count: number // Calculated count of likes
   repost_count: number // Calculated count of reposts
+  comment_count: number
+  images: PostImage[]
+}
+
+export interface InteractionCount {
+  like_count: number // Calculated count of likes
+  repost_count: number // Calculated count of reposts
+  comment_count: number
 }

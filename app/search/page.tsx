@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button"
 
 export default function SearchPage() {
   return (
-    <div className="flex min-h-screen flex-1 flex-col items-center justify-between">
+
+    <div className="flex px-5 min-h-screen flex-1 flex-col items-center justify-between">
       <div className="min-h-screen w-full max-w-[640px]">
         <div className="flex flex-col py-2">
           <div className="flex h-[60xp] w-full items-center justify-center">

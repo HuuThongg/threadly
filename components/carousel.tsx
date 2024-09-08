@@ -1,10 +1,9 @@
-import { EmblaOptionsType } from "embla-carousel"
+"use client"
 import EmblaCarousel from "./EmblaCarousel"
+import { PostImage } from "@/types"
 
-const OPTIONS: EmblaOptionsType = { dragFree: true }
-const SLIDE_COUNT = 5
-const SLIDES = Array.from(Array(SLIDE_COUNT).keys())
 
-export function Carousel() {
-  return <EmblaCarousel slides={SLIDES} options={OPTIONS} />
+export function Carousel({ postImages }: { postImages: PostImage[] }) {
+
+  return < EmblaCarousel postImages={postImages} />
 }

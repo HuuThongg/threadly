@@ -1,4 +1,6 @@
+import { UserPostView } from "@/types"
 import { pool } from "."
+import { v4 as uuidv4 } from "uuid"
 
 export async function getFolloweredUserPosts(userId: string) {
   const query = `
@@ -22,12 +24,46 @@ export async function getFolloweredUserPosts(userId: string) {
   }
 }
 
+export async function getPosts(): Promise<UserPostView[]> {
+  const query = `
+    SELECT  *  FROM user_posts_view;
+  `;
+  const client = await pool.connect();
+  try {
+    const res = await client.query(query)
+    return res.rows as UserPostView[]
+  } catch (error) {
+    throw new Error("failed to fetch user_posts_view")
+  }
+}
+
+export async function updateEmailVerified(userId: string) {
+  const query = `
+    UPDATE users
+    SET "emailVerified" = NOW()
+    WHERE userId = $1;
+  `;
+  const values = [userId];
+
+  const client = await pool.connect()
+  try {
+    const res = await client.query(query, values)
+    return res.rows
+  } catch (error) {
+    console.error("Error executing query", error)
+    throw new Error("Failed to fetch posts from the database")
+  } finally {
+    client.release()
+  }
+}
+
 export async function getPostById(postId: string) {
   const query = `
     SELECT * 
     FROM user_posts_view
     WHERE post_id = $1;
   `
+
   const values = [postId]
   const client = await pool.connect()
   try {
@@ -42,10 +78,16 @@ export async function getPostById(postId: string) {
 }
 
 export async function getCommentsByPostId(postId: string) {
+  //const query = `
+  //  SELECT *
+  //  FROM comments
+  //  WHERE postId = $1
+  //  ORDER BY created_at ASC;
+  //`
   const query = `
-    SELECT *
-    FROM comments
-    WHERE postId = $1
+    SELECT * 
+    FROM post_comments_view
+    WHERE post_id = $1
     ORDER BY created_at ASC;
   `
   const values = [postId]
@@ -168,12 +210,18 @@ export async function getFollowingCount(userId: string) {
 
 interface CreatePostParams {
   userId: string // ID of the user creating the post
-  content: string // Content of the post
+  content?: string // Content of the post
   images?: string[] // Optional array of image URLs
+  blurHashes?: string[]
 }
 
-export async function createPost({ userId, content, images }: CreatePostParams) {
+export async function createPost({ userId, content, images, blurHashes }: CreatePostParams) {
   const client = await pool.connect()
+  if (!content && !images && !blurHashes) {
+
+    throw new Error("Failed to create post")
+  }
+
   try {
     // Start a transaction
     await client.query("BEGIN")
@@ -189,14 +237,22 @@ export async function createPost({ userId, content, images }: CreatePostParams) 
     const postId = postResult.rows[0].id
 
     // Insert the post images if they exist
-    if (images && images.length > 0) {
+
+    // Insert the post images and blurhashes if they exist
+    if (images && images.length > 0 && blurHashes && blurHashes.length > 0) {
       const imageInsertQuery = `
-        INSERT INTO post_images (postId, image_url)
-        VALUES ${images.map((_, index) => `($1, $${index + 2})`).join(", ")}
-      `
-      const imageValues = [postId, ...images]
-      await client.query(imageInsertQuery, imageValues)
+    INSERT INTO post_images ("postId", image_url, "blurHash")
+    VALUES ${images.map((_, index) => `($1, $${index * 2 + 2}, $${index * 2 + 3})`).join(", ")}
+  `;
+      const imageValues = [postId];
+
+      images.forEach((imageUrl, index) => {
+        imageValues.push(imageUrl, blurHashes[index]);
+      });
+
+      await client.query(imageInsertQuery, imageValues);
     }
+
 
     // Commit the transaction
     await client.query("COMMIT")
@@ -215,8 +271,10 @@ export async function createPost({ userId, content, images }: CreatePostParams) 
 interface CreateCommentParams {
   userId: string // ID of the user creating the comment
   postId: string // ID of the post the comment is related to
-  content: string // Content of the comment
+  content?: string // Content of the comment
   parentCommentId?: string // Optional ID of the parent comment for nested comments
+  images?: string[]
+  blurHashes?: string[]
 }
 
 export async function createComment({
@@ -224,8 +282,14 @@ export async function createComment({
   postId,
   content,
   parentCommentId,
+  images,
+  blurHashes
 }: CreateCommentParams) {
   const client = await pool.connect()
+  console.log("=======================")
+  console.log("postId", postId)
+  console.log("content,", content)
+  console.log("parentCommentId", parentCommentId)
   try {
     // Start a transaction
     await client.query("BEGIN")
@@ -239,7 +303,19 @@ export async function createComment({
     const commentValues = [postId, userId, content, parentCommentId || null]
     const commentResult = await client.query(commentInsertQuery, commentValues)
     const commentId = commentResult.rows[0].id
+    if (images && images.length > 0 && blurHashes && blurHashes.length > 0) {
+      const imageInsertQuery = `
+    INSERT INTO comment_images ("commentId", image_url, "blurHash")
+    VALUES ${images.map((_, index) => `($1, $${index * 2 + 2}, $${index * 2 + 3})`).join(", ")}
+  `;
+      const imageValues = [commentId];
 
+      images.forEach((imageUrl, index) => {
+        imageValues.push(imageUrl, blurHashes[index]);
+      });
+
+      await client.query(imageInsertQuery, imageValues);
+    }
     // Commit the transaction
     await client.query("COMMIT")
 
@@ -249,6 +325,39 @@ export async function createComment({
     await client.query("ROLLBACK")
     console.error("Error creating comment", error)
     throw new Error("Failed to create comment")
+  } finally {
+    client.release()
+  }
+}
+
+interface OnboardingData {
+  userId: string
+  handle: string
+  bio?: string
+  profileImage?: File
+}
+
+export async function completeOnboarding(data: OnboardingData): Promise<void> {
+  const { userId, handle, bio, profileImage } = data
+
+  let profileImageUrl: string | null = null
+
+  if (profileImage) {
+    // Handle file upload (e.g., save to S3, filesystem)
+    const imageFilename = `${uuidv4()}_${profileImage.name}`
+    // Save the file and get the URL (implementation depends on your setup)
+    // Example: Upload file to S3 and get URL
+    profileImageUrl = `/path/to/images/${imageFilename}`
+  }
+
+  const client = await pool.connect()
+  try {
+    await client.query(
+      `UPDATE users
+       SET handle = $1, bio = $2, profile_image_url = $3, onboarding_complete = TRUE
+       WHERE id = $4`,
+      [handle, bio || null, profileImageUrl || null, userId],
+    )
   } finally {
     client.release()
   }

@@ -9,12 +9,4 @@ const pool = new Pool({
 
 export { pool }
 
-const pool1 = new Pool({
-  host: "",
-  user: "database-user",
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-  database: "your_database",
-  password: "",
-})
+
