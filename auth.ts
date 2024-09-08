@@ -2,12 +2,13 @@ import NextAuth from "next-auth"
 import PostgresAdapter from "@auth/pg-adapter"
 import { pool } from "@/db"
 import authConfig from "@/auth.config"
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PostgresAdapter(pool),
   callbacks: {
     async signIn({ user, account }) {
-      console.log("user", user)
-      console.log("account", account)
+      //console.log("user", user)
+      //console.log("account", account)
       if (account?.provider !== "credentials") return true
       return false
     },
@@ -15,11 +16,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token.sub) {
         session.user.id = token.sub
       }
-      console.log("id:", session.userId)
-      console.log("async Session user", user)
-      console.log("async session session", session)
-      console.log("async Session token", token)
-      console.log("async session trigger", trigger)
+      //console.log("id:", session.userId)
+      //console.log("async Session user", user)
+      //console.log("async session session", session)
+      //console.log("async Session token", token)
+      //console.log("async session trigger", trigger)
       return session;
     }
   },

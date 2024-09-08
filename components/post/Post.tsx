@@ -55,7 +55,7 @@ export function Post({ postInfo }: { postInfo: UserPostView }) {
             )
           }
           {/* interactino*/}
-          <PostInteraction postId={postInfo.post_id} like_count={postInfo.like_count} comment_count={postInfo.comment_count} repost_count={postInfo.repost_count} />
+          <PostInteraction postInfo={postInfo} />
         </div>
       </div>
 

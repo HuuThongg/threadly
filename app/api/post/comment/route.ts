@@ -1,3 +1,4 @@
+
 import { auth } from "@/auth";
 import { encode } from 'blurhash';
 import sharp from 'sharp';
@@ -5,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { NextRequest, NextResponse } from "next/server";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3Client } from "@/aws";
-import { createPost } from "@/db/query";
+import { createComment, createPost } from "@/db/query";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -29,11 +30,8 @@ export async function POST(request: NextRequest) {
     if (!(file instanceof Blob)) {
       return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
     }
-    console.log("file", file)
     const arrayBuffer = await file.arrayBuffer();
-    console.log("arrayBuffer", arrayBuffer)
     const imageBuffer = Buffer.from(arrayBuffer);
-    console.log("imageBuffer", imageBuffer)
     // Resize the image
     const resizedImageBuffer = await sharp(imageBuffer)
       .resize(800)
@@ -51,9 +49,8 @@ export async function POST(request: NextRequest) {
       Body: resizedImageBuffer,
       ContentType: 'image/jpeg',
     });
-    console.log("-----------------")
+    console.log("hewllo ren cho dien")
     const uploadResponse = await s3Client.send(uploadCommand);
-    console.log("helllo")
     if (!uploadResponse) {
       return NextResponse.json({ error: "Failed to upload image" }, { status: 500 });
     }
@@ -69,9 +66,13 @@ export async function POST(request: NextRequest) {
 
   // Handle content
   const content = formData.get('content') as string || null || undefined;
-
+  const postId = formData.get('postId') as string;
+  const parentCommentId = formData.get('parentCommentId') as string || null || undefined;
+  console.log("postId", postId)
+  console.log("content,", content)
+  console.log("parentCommentId", parentCommentId)
   // Create the post
-  await createPost({ userId, content, images: imagesUrls, blurHashes });
+  await createComment({ userId, postId, parentCommentId, content, images: imagesUrls, blurHashes });
 
   return NextResponse.json({ success: true }, { status: 201 });
 }

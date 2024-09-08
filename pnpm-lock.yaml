@@ -98,6 +98,9 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.10)
+      use-next-blurhash:
+        specifier: ^1.0.5
+        version: 1.0.5(react@18.3.1)
       uuid:
         specifier: ^10.0.0
         version: 10.0.0
@@ -1362,6 +1365,9 @@ packages:
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
+
+  blurhash@1.1.5:
+    resolution: {integrity: sha512-a+LO3A2DfxTaTztsmkbLYmUzUeApi0LZuKalwbNmqAHR6HhJGMt1qSV/R3wc+w4DL28holjqO3Bg74aUGavGjg==}
 
   blurhash@2.0.5:
     resolution: {integrity: sha512-cRygWd7kGBQO3VEhPiTgq4Wc43ctsM+o46urrmPOiuAe+07fzlSB9OJVdpgDL0jPqXUVQ9ht7aq7kxOeJHRK+w==}
@@ -2904,6 +2910,12 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  use-next-blurhash@1.0.5:
+    resolution: {integrity: sha512-PMu7054Ic6zDKjjKT2PCsfJrMYmdcrfj6miUZzkfes+fxQ9YlwM44qmtbedQpRAncuzQJEW3fVK9jeNqUFgzvg==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
 
   use-sidecar@1.1.2:
     resolution: {integrity: sha512-epTbsLuzZ7lPClpz2TyryBfztm7m+28DlEv2ZCQ3MDr5ssiwyOwGH/e5F9CkfWjJ1t4clvI58yF822/GUkjjhw==}
@@ -4629,6 +4641,8 @@ snapshots:
 
   binary-extensions@2.3.0: {}
 
+  blurhash@1.1.5: {}
+
   blurhash@2.0.5: {}
 
   bowser@2.11.0: {}
@@ -6302,6 +6316,11 @@ snapshots:
       tslib: 2.6.3
     optionalDependencies:
       '@types/react': 18.3.4
+
+  use-next-blurhash@1.0.5(react@18.3.1):
+    dependencies:
+      blurhash: 1.1.5
+      react: 18.3.1
 
   use-sidecar@1.1.2(@types/react@18.3.4)(react@18.3.1):
     dependencies:

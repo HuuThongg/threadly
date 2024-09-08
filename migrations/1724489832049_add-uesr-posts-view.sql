@@ -13,12 +13,12 @@ SELECT
   (SELECT count(*)::int FROM reposts r WHERE r."originalPostId" = p.id) AS repost_count,
   (SELECT count(*)::int FROM comments c WHERE c."postId" = p.id) as comment_count,
   -- Aggregate images as a JSON array
-  COALESCE(json_agg(
+  coalesce(json_agg(
     json_build_object(
       'image_url', pi.image_url,
-      'blurHash', pi."blurHash"
+      'blurhash', pi."blurhash"
     )
-  ) FILTER (WHERE pi.image_url IS NOT NULL), '[]') AS images
+  ) filter (where pi.image_url is not null), '[]') as images
 FROM 
   posts p 
 JOIN

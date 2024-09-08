@@ -47,6 +47,7 @@
     "tailwind-merge": "^2.5.2",
     "tailwind-scrollbar": "^3.1.0",
     "tailwindcss-animate": "^1.0.7",
+    "use-next-blurhash": "^1.0.5",
     "uuid": "^10.0.0",
     "zod": "^3.23.8"
   },

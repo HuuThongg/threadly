@@ -15,8 +15,8 @@ export function ImageCarousel({
 
 import useEmblaCarousel from "embla-carousel-react"
 import Image from "next/image"
-import { SelectedFile } from "../thread-content"
 import { X } from "lucide-react"
+import { SelectedFile } from "@/schema";
 
 type PropType = {
   fileObj: SelectedFile[];

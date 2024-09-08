@@ -63,6 +63,7 @@ export async function getPostById(postId: string) {
     FROM user_posts_view
     WHERE post_id = $1;
   `
+
   const values = [postId]
   const client = await pool.connect()
   try {
@@ -77,10 +78,16 @@ export async function getPostById(postId: string) {
 }
 
 export async function getCommentsByPostId(postId: string) {
+  //const query = `
+  //  SELECT *
+  //  FROM comments
+  //  WHERE postId = $1
+  //  ORDER BY created_at ASC;
+  //`
   const query = `
-    SELECT *
-    FROM comments
-    WHERE postId = $1
+    SELECT * 
+    FROM post_comments_view
+    WHERE post_id = $1
     ORDER BY created_at ASC;
   `
   const values = [postId]
@@ -264,8 +271,10 @@ export async function createPost({ userId, content, images, blurHashes }: Create
 interface CreateCommentParams {
   userId: string // ID of the user creating the comment
   postId: string // ID of the post the comment is related to
-  content: string // Content of the comment
+  content?: string // Content of the comment
   parentCommentId?: string // Optional ID of the parent comment for nested comments
+  images?: string[]
+  blurHashes?: string[]
 }
 
 export async function createComment({
@@ -273,8 +282,14 @@ export async function createComment({
   postId,
   content,
   parentCommentId,
+  images,
+  blurHashes
 }: CreateCommentParams) {
   const client = await pool.connect()
+  console.log("=======================")
+  console.log("postId", postId)
+  console.log("content,", content)
+  console.log("parentCommentId", parentCommentId)
   try {
     // Start a transaction
     await client.query("BEGIN")
@@ -288,7 +303,19 @@ export async function createComment({
     const commentValues = [postId, userId, content, parentCommentId || null]
     const commentResult = await client.query(commentInsertQuery, commentValues)
     const commentId = commentResult.rows[0].id
+    if (images && images.length > 0 && blurHashes && blurHashes.length > 0) {
+      const imageInsertQuery = `
+    INSERT INTO comment_images ("commentId", image_url, "blurHash")
+    VALUES ${images.map((_, index) => `($1, $${index * 2 + 2}, $${index * 2 + 3})`).join(", ")}
+  `;
+      const imageValues = [commentId];
 
+      images.forEach((imageUrl, index) => {
+        imageValues.push(imageUrl, blurHashes[index]);
+      });
+
+      await client.query(imageInsertQuery, imageValues);
+    }
     // Commit the transaction
     await client.query("COMMIT")
 

@@ -19,13 +19,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormField, FormItem } from '@/components/ui/form';
 import { SelectedFile } from '@/schema';
 import { postFormSchema } from '../thread-content';
+import { UserPostView } from '@/types';
+import { Post } from '../post/Post';
 
 
-export function CommentSection({ setOpen }: { setOpen: (arg: boolean) => void }) {
+export function CommentSection({ setOpen, postInfo }: { setOpen: (arg: boolean) => void, postInfo: UserPostView }) {
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [selectedFiles, setSelectedFiles] = useState<SelectedFile[]>([]);
-  const [content, setContent] = useState("")
   const { toast } = useToast()
   const session = useSession()
 
@@ -45,7 +46,6 @@ export function CommentSection({ setOpen }: { setOpen: (arg: boolean) => void })
 
 
   async function onSubmit(values: z.infer<typeof postFormSchema>) {
-    console.log("image", values)
     const formData = new FormData();
 
     // Convert FileList to array and append files to FormData
@@ -60,24 +60,25 @@ export function CommentSection({ setOpen }: { setOpen: (arg: boolean) => void })
     if (values.content) {
       formData.append('content', values.content);
     }
+    formData.append("postId", postInfo.post_id)
+    //formData.append("parentCommentId", null)
 
 
     try {
-      const response = await fetch('/api/imageUpload', {
+      const response = await fetch('/api/post/comment', {
         method: 'POST',
         body: formData
       })
       if (!response.ok) {
-        throw new Error('Failed to upload post');
+        throw new Error('Failed to comment');
       }
 
       setSelectedFiles([]);
-      setContent("");
       setOpen(false)
 
       toast({
         title: "Success",
-        description: "Your post has been created!",
+        description: "Your comment has been created!",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -127,26 +128,13 @@ export function CommentSection({ setOpen }: { setOpen: (arg: boolean) => void })
     setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
   return (
-    <DialogContent className="bg-primary-foreground sm:max-w-[668px]">
+    <DialogContent className="bg-primary-foreground sm:max-w-[668px]" onClick={(e) => { e.stopPropagation(); e.preventDefault() }}>
       <DialogHeader>
         <DialogTitle className="text-center text-[16px] text-primary">
           Reply
         </DialogTitle>
       </DialogHeader>
-      <div className='flex  items-center gap-x-3'>
-        <div className="h-9 w-9 cursor-pointer select-none rounded-full bg-neutral-900">
-          <NextImage
-            className="rounded-full"
-            src={session?.data?.user?.image || "/defaultAvatar.jpg"}
-            alt="logo"
-            width={36}
-            height={36}
-          />
-        </div>
-        <div className="flex justify-between">
-          <div className="font-medium tracking-tighter text-primary">huuthong</div>
-        </div>
-      </div>
+      <Post postInfo={postInfo} key={postInfo.post_id} />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
 

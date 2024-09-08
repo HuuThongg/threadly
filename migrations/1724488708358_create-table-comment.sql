@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS comments
 (
   id uuid default gen_random_uuid() primary key,
   "postId" uuid not null references posts(id) on delete cascade,
-  "userId" uuid not null references posts(id) on delete cascade,
+  "userId" uuid not null references users(id) on delete cascade,
   content text,
   parent_comment_id uuid references comments(id) on delete cascade,
   created_at timestamptz default now(),

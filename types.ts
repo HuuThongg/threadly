@@ -61,5 +61,4 @@ export interface InteractionCount {
   like_count: number // Calculated count of likes
   repost_count: number // Calculated count of reposts
   comment_count: number
-
 }

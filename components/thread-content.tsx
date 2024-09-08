@@ -26,12 +26,10 @@ import { SelectedFile } from '@/schema';
 export const postFormSchema = z.object({
   content: z.string().optional(),
   //images: z.instanceof(FileList).optional(),
-
   images: z.unknown().transform(value => {
     return value as FileList
   }).optional(),
 })
-
 
 export function ThreadContent() {
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -171,7 +169,7 @@ export function ThreadContent() {
               </div>
               <div className="col-start-2 row-start-1 self-start">
                 <div className="flex justify-between">
-                  <div className="font-medium tracking-tighter">huuthong</div>
+                  <div className="font-medium tracking-tighter">{session?.data?.user?.name || session?.data?.user?.email}</div>
                 </div>
               </div>
               <div className="col-start-2 row-span-full row-start-2">

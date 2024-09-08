@@ -1,5 +1,6 @@
 -- Up Migration
 
+
 CREATE OR REPLACE VIEW post_comments_view AS
 SELECT 
     c.id AS comment_id,
@@ -9,11 +10,21 @@ SELECT
     c.content,
     c."parent_comment_id",
     c.created_at,
-    c.updated_at
+    coalesce(json_agg(
+    json_build_object(
+      'image_url', ci.image_url,
+      'blurhash', ci."blurHash"
+    )
+  ) filter (where ci.image_url is not null), '[]') as images
 FROM 
     comments c
 JOIN 
-    users u ON c."userId" = u.id;
+    users u ON c."userId" = u.id
+LEFT JOIN 
+    comment_images ci ON c.id = ci."commentId"
+GROUP BY 
+    c.id, u.handle; 
+
 
 
     -- Down Migration
