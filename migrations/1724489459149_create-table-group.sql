@@ -1,5 +1,5 @@
 -- Up Migration
-CREATE TABLE IF NOT EXISTS  groups
+CREATE TABLE IF NOT EXISTS  chat_groups
 (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name VARCHAR(255) NOT NULL,

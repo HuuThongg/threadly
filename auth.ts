@@ -21,8 +21,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       //console.log("async session session", session)
       //console.log("async Session token", token)
       //console.log("async session trigger", trigger)
-      return session;
-    }
+      return session
+    },
   },
   pages: {
     signIn: "/auth/login",
@@ -43,9 +43,6 @@ declare module "next-auth" {
     error?: "RefreshTokenError"
   }
 }
-
-
-
 
 //async Session token {
 //  name: 'Huu Thong Le',

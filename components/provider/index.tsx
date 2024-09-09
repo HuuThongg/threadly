@@ -8,9 +8,7 @@ export async function Provider({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider session={session}>
       <TanstackProvider>
-        <JotaiProvider>
-          {children}
-        </JotaiProvider>
+        <JotaiProvider>{children}</JotaiProvider>
       </TanstackProvider>
     </SessionProvider>
   )

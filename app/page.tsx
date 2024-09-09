@@ -1,14 +1,15 @@
 import { auth } from "@/auth"
 import Posts from "@/components/post"
 import { StartThread } from "@/components/start-thread"
+import { getPosts } from "@/db/query"
 import { ChevronDown } from "lucide-react"
 
 export default async function HomePage() {
-  const session = await auth();
+  const session = await auth()
+  const postsList = await getPosts()
   return (
-
-    <div className="flex px-5 min-h-screen flex-1 flex-col items-center justify-between">
-      <div className="min-h-screen w-full max-w-[640px] ">
+    <div className="flex min-h-screen flex-1 flex-col items-center justify-between px-5">
+      <div className="min-h-screen w-full max-w-[640px]">
         <div className="flex flex-col py-2">
           <div className="flex h-[60xp] w-full items-center justify-center">
             <div className="flex h-full items-center justify-center space-x-3">
@@ -20,12 +21,9 @@ export default async function HomePage() {
           </div>
           <main className="flex flex-col rounded-3xl border border-border bg-primary-foreground text-primary">
             {/*Start a thread */}
-            {session !== null && session?.user ? (
-
-              <StartThread />
-            ) : null}
+            {session !== null && session?.user ? <StartThread /> : null}
             {/*Post*/}
-            <Posts />
+            <Posts postsList={postsList} />
           </main>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { S3Client, S3ClientConfig } from '@aws-sdk/client-s3'
+import { S3Client, S3ClientConfig } from "@aws-sdk/client-s3"
 
 const s3ClientConfig: S3ClientConfig = {
   credentials: {

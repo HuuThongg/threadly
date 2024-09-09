@@ -10,7 +10,15 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { AlignLeft, Heart, House, LucideIcon, MessageSquare, Search, User } from "lucide-react"
+import {
+  AlignLeft,
+  Heart,
+  House,
+  LucideIcon,
+  MessageSquare,
+  Search,
+  User,
+} from "lucide-react"
 import { useSession, signOut, signIn } from "next-auth/react"
 
 interface SidebarItem {
@@ -31,7 +39,7 @@ const Sidebar = () => {
     },
     {
       nameIcon: MessageSquare,
-      link: "/messages/direct"
+      link: "/messages/direct",
     },
     {
       nameIcon: Heart,
@@ -48,9 +56,13 @@ const Sidebar = () => {
       <div className="flex flex-col items-center py-4">
         <div className="mb-8">
           <p className="font-serif font-extrabold italic">R&R</p>
-          <div> {session.status === "authenticated" ?
-            (<button onClick={() => signOut()}>Log out</button >)
-            : (<button onClick={() => signIn("github")}> Sign In</button>)}
+          <div>
+            {" "}
+            {session.status === "authenticated" ? (
+              <button onClick={() => signOut()}>Log out</button>
+            ) : (
+              <button onClick={() => signIn("github")}> Sign In</button>
+            )}
           </div>
         </div>
       </div>
@@ -92,12 +104,14 @@ const Sidebar = () => {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="rounded-xl px-2 py-4 text-[15px] font-semibold text-primary hover:bg-secondary">
-                <button onClick={() => signOut()} >Logout</button>
+                <button onClick={() => signOut()}>Logout</button>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      ) : (<div className="size-14 bg-transparent mb-4"></div>)}
+      ) : (
+        <div className="mb-4 size-14 bg-transparent"></div>
+      )}
       {/* Footer Menu Icons (if any) */}
     </div>
   )

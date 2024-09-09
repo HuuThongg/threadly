@@ -25,8 +25,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const session = await auth();
-  console.log('uesr session id ', session?.user?.id)
+  const session = await auth()
+  console.log("uesr session id ", session?.user?.id)
   return (
     <Provider>
       <html lang="en">
@@ -39,10 +39,7 @@ export default async function RootLayout({
             <SideBar />
             {children}
           </div>
-          {session !== null && session?.user ? (
-
-            <FloatingButton />
-          ) : null}
+          {session !== null && session?.user ? <FloatingButton /> : null}
           <Toaster />
         </body>
       </html>

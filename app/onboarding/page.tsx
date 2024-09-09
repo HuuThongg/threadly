@@ -44,7 +44,7 @@ const OnboardingPage = ({ userId }: OnboardingProps) => {
   }
 
   return (
-    <div className="flex px-5 min-h-screen flex-1 flex-col items-center justify-between">
+    <div className="flex min-h-screen flex-1 flex-col items-center justify-between px-5">
       <h1>Complete Your Onboarding</h1>
       <form onSubmit={handleSubmit}>
         <label>

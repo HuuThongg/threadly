@@ -25,9 +25,9 @@ export function EditProfile() {
 
         <DialogContent className="bg-[#101010] text-[15px]">
           <DialogHeader>
-            <DialogTitle className="text-primary text-left">Name</DialogTitle>
+            <DialogTitle className="text-left text-primary">Name</DialogTitle>
             <DialogDescription>
-              <div className="text-primary flex flex-row justify-between">
+              <div className="flex flex-row justify-between text-primary">
                 <div className="flex flex-row items-center">
                   <div className="flex items-center pr-2">
                     <Lock size={14} />
@@ -44,9 +44,9 @@ export function EditProfile() {
           </DialogHeader>
           <Separator className="w-[calc(100%-48px)]" />
           <DialogHeader>
-            <DialogTitle className="text-primary text-left">Bio</DialogTitle>
+            <DialogTitle className="text-left text-primary">Bio</DialogTitle>
             <DialogDescription>
-              <div className="text-primary text-left">
+              <div className="text-left text-primary">
                 <span>Wake up early to be successful</span>
               </div>
             </DialogDescription>
@@ -55,10 +55,10 @@ export function EditProfile() {
           <Separator />
 
           <DialogHeader>
-            <DialogTitle className="text-primary text-left">Link</DialogTitle>
+            <DialogTitle className="text-left text-primary">Link</DialogTitle>
             <DialogDescription>
               <Textarea
-                className="text-primary line-clamp-3 rounded-none border-0 border-none bg-transparent p-0 text-left shadow-none focus-visible:border-0 focus-visible:border-none focus-visible:outline-none focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                className="line-clamp-3 rounded-none border-0 border-none bg-transparent p-0 text-left text-primary shadow-none focus-visible:border-0 focus-visible:border-none focus-visible:outline-none focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                 placeholder="+ Add link"
               />
             </DialogDescription>

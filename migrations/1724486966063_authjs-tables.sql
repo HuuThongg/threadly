@@ -20,8 +20,14 @@ CREATE TABLE IF NOT EXISTS users
   image TEXT,
   bio TEXT,
   gender TEXT,
-  onboarding_complete BOOLEAN DEFAULT FALSE
+  onboarding_complete BOOLEAN DEFAULT FALSE,
+ search_vector tsvector 
 );
+
+UPDATE users 
+SET search_vector = to_tsvector('english',name || ' '|| handle);
+
+CREATE INDEX idx_search_vector ON users USING GIN(search_vector);
 
 -- Users table indexes
 CREATE INDEX idx_users_email ON users(email);
@@ -54,13 +60,14 @@ CREATE TABLE IF NOT EXISTS  sessions
 
 
 -- Down Migration
-
+DROP INDEX IF EXISTS idx_search_vector;
+DROP INDEX IF EXISTS  idx_users_email;
+DROP INDEX IF EXISTS  idx_users_handle;
 -- Drop tables in reverse order of creation to avoid dependency issues
 DROP TABLE IF EXISTS sessions CASCADE;
 DROP TABLE IF EXISTS accounts CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS verification_token CASCADE;
 
-DROP INDEX IF EXISTS  idx_users_email;
-DROP INDEX IF EXISTS  idx_users_handle;
+
 

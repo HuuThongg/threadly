@@ -1,39 +1,42 @@
-import { useState, useEffect } from 'react';
-import { decode } from 'blurhash';
+import { useState, useEffect } from "react"
+import { decode } from "blurhash"
 
-
-const DEFAULT_BLUR_DATA_URL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAgcBAp8WtHAAAAAASUVORK5CYII=';
-const useBlurhash = (blurHash: string, width: number = 300, height: number = 300): string => {
-  const [blurDataUrl, setBlurDataUrl] = useState<string>(DEFAULT_BLUR_DATA_URL);
+const DEFAULT_BLUR_DATA_URL =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAgcBAp8WtHAAAAAASUVORK5CYII="
+const useBlurhash = (
+  blurHash: string,
+  width: number = 300,
+  height: number = 300,
+): string => {
+  const [blurDataUrl, setBlurDataUrl] = useState<string>(DEFAULT_BLUR_DATA_URL)
 
   useEffect(() => {
-
     // Decode the BlurHash into pixel data
-    const pixels = decode(blurHash, width, height);
+    const pixels = decode(blurHash, width, height)
 
     // Create a canvas element
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
+    const canvas = document.createElement("canvas")
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext("2d")
 
     if (ctx) {
       // Create an ImageData object
-      const imageData = ctx.createImageData(width, height);
-      imageData.data.set(pixels);
+      const imageData = ctx.createImageData(width, height)
+      imageData.data.set(pixels)
 
       // Draw the ImageData onto the canvas
-      ctx.putImageData(imageData, 0, 0);
+      ctx.putImageData(imageData, 0, 0)
 
       // Convert the canvas to a data URL
-      const blurHashURL = canvas.toDataURL();
+      const blurHashURL = canvas.toDataURL()
 
       // Update the state with the generated data URL
-      setBlurDataUrl(blurHashURL);
+      setBlurDataUrl(blurHashURL)
     }
-  }, [blurHash, width, height]);
+  }, [blurHash, width, height])
 
-  return blurDataUrl;
-};
+  return blurDataUrl
+}
 
-export default useBlurhash;
+export default useBlurhash

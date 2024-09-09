@@ -2,10 +2,11 @@ import { Button } from "@/components/ui/button"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
+import { UserThread } from "@/app/[handle]/_components/user-threads"
 
 export function ProfileTabs() {
   return (
-    <Tabs defaultValue="account" className="w-full">
+    <Tabs defaultValue="threads" className="w-full">
       <TabsList className="grid w-full grid-cols-3 bg-primary-foreground p-0">
         <div className="relative flex flex-col items-center">
           <TabsTrigger value="threads" className="relative z-10">
@@ -19,7 +20,9 @@ export function ProfileTabs() {
       </TabsList>
       <Separator className="mx-[-24px] w-[calc(100%+48px)]" />
       <TabsContent value="threads">
-        <div>This is threads</div>
+        <div className="mx-[-24px]">
+          <UserThread />
+        </div>
       </TabsContent>
 
       <TabsContent value="replies">

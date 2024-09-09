@@ -27,8 +27,8 @@ export async function getFolloweredUserPosts(userId: string) {
 export async function getPosts(): Promise<UserPostView[]> {
   const query = `
     SELECT  *  FROM user_posts_view;
-  `;
-  const client = await pool.connect();
+  `
+  const client = await pool.connect()
   try {
     const res = await client.query(query)
     return res.rows as UserPostView[]
@@ -42,8 +42,8 @@ export async function updateEmailVerified(userId: string) {
     UPDATE users
     SET "emailVerified" = NOW()
     WHERE userId = $1;
-  `;
-  const values = [userId];
+  `
+  const values = [userId]
 
   const client = await pool.connect()
   try {
@@ -139,18 +139,60 @@ export async function getUserProfileById(userId: string) {
   }
 }
 
-export async function searchUsersByHandle(handle: string) {
+export async function searchUsers(currentUserId: string, searchTerm: string) {
   const query = `
-    SELECT id, handle, name, image
-    FROM users
-    WHERE handle ILIKE $1;
+    SELECT u.id AS user_id, 
+           u.handle, 
+           u.name, 
+           u.email, 
+           u.image, 
+           u.bio, 
+           u.gender, 
+           COALESCE(f_following."followerId" IS NOT NULL, FALSE) AS following, -- Current user following this user
+           COALESCE(f_followed."followerId" IS NOT NULL, FALSE) AS followed,   -- This user following the current user
+           ts_rank(u.search_vector, query) AS rank
+    FROM users u
+    LEFT JOIN follows f_following
+      ON u.id = f_following."followingId" AND f_following."followerId" = $1
+    LEFT JOIN follows f_followed
+      ON u.id = f_followed."followerId" AND f_followed."followingId" = $1
+    CROSS JOIN to_tsquery('english', $2) query
+    WHERE u.search_vector @@ query
+      AND u.id <> $1
+    ORDER BY rank DESC;
   `
-  const values = [`%${handle}%`]
+
+  const query1 = `
+  SELECT u.id AS user_id, 
+         u.handle, 
+         u.name, 
+         u.email, 
+         u.image, 
+         u.bio, 
+         u.gender, 
+         COALESCE(f_following."followerId" IS NOT NULL, FALSE) AS following, -- Current user following this user
+         COALESCE(f_followed."followerId" IS NOT NULL, FALSE) AS followed    -- This user following the current user
+  FROM users u
+  LEFT JOIN follows f_following
+    ON u.id = f_following."followingId" AND f_following."followerId" = $1
+  LEFT JOIN follows f_followed
+    ON u.id = f_followed."followerId" AND f_followed."followingId" = $1
+  WHERE u.id <> $1 AND (u.handle ILIKE '%' || $2 || '%' OR u.name ILIKE '%' || $2 || '%');
+`
+
+  // Transform searchTerm to tsquery format
+  const formattedSearchTerm = searchTerm.split(" ").join(" & ")
+
+  //const values = [currentUserId, formattedSearchTerm];
+  const values = [currentUserId, searchTerm]
 
   const client = await pool.connect()
   try {
-    const res = await client.query(query, values)
+    const res = await client.query(query1, values)
     return res.rows
+  } catch (error) {
+    console.error("Error executing query", error)
+    throw new Error("Failed to search users")
   } finally {
     client.release()
   }
@@ -215,10 +257,14 @@ interface CreatePostParams {
   blurHashes?: string[]
 }
 
-export async function createPost({ userId, content, images, blurHashes }: CreatePostParams) {
+export async function createPost({
+  userId,
+  content,
+  images,
+  blurHashes,
+}: CreatePostParams) {
   const client = await pool.connect()
   if (!content && !images && !blurHashes) {
-
     throw new Error("Failed to create post")
   }
 
@@ -243,16 +289,15 @@ export async function createPost({ userId, content, images, blurHashes }: Create
       const imageInsertQuery = `
     INSERT INTO post_images ("postId", image_url, "blurHash")
     VALUES ${images.map((_, index) => `($1, $${index * 2 + 2}, $${index * 2 + 3})`).join(", ")}
-  `;
-      const imageValues = [postId];
+  `
+      const imageValues = [postId]
 
       images.forEach((imageUrl, index) => {
-        imageValues.push(imageUrl, blurHashes[index]);
-      });
+        imageValues.push(imageUrl, blurHashes[index])
+      })
 
-      await client.query(imageInsertQuery, imageValues);
+      await client.query(imageInsertQuery, imageValues)
     }
-
 
     // Commit the transaction
     await client.query("COMMIT")
@@ -283,7 +328,7 @@ export async function createComment({
   content,
   parentCommentId,
   images,
-  blurHashes
+  blurHashes,
 }: CreateCommentParams) {
   const client = await pool.connect()
   console.log("=======================")
@@ -307,14 +352,14 @@ export async function createComment({
       const imageInsertQuery = `
     INSERT INTO comment_images ("commentId", image_url, "blurHash")
     VALUES ${images.map((_, index) => `($1, $${index * 2 + 2}, $${index * 2 + 3})`).join(", ")}
-  `;
-      const imageValues = [commentId];
+  `
+      const imageValues = [commentId]
 
       images.forEach((imageUrl, index) => {
-        imageValues.push(imageUrl, blurHashes[index]);
-      });
+        imageValues.push(imageUrl, blurHashes[index])
+      })
 
-      await client.query(imageInsertQuery, imageValues);
+      await client.query(imageInsertQuery, imageValues)
     }
     // Commit the transaction
     await client.query("COMMIT")
@@ -358,6 +403,142 @@ export async function completeOnboarding(data: OnboardingData): Promise<void> {
        WHERE id = $4`,
       [handle, bio || null, profileImageUrl || null, userId],
     )
+  } finally {
+    client.release()
+  }
+}
+export async function getFollowers(currentUserId: string) {
+  const query = `
+    SELECT u.id AS user_id, 
+           u.handle, 
+           u.name, 
+           u.image
+    FROM users u
+    JOIN follows f_followed
+      ON u.id = f_followed."followerId"
+    WHERE f_followed."followingId" = $1
+      AND u.id <> $1;
+  `
+  const values = [currentUserId]
+
+  const client = await pool.connect()
+  try {
+    const res = await client.query(query, values)
+    return res.rows
+  } catch (error) {
+    console.error("Error executing query", error)
+    throw new Error("Failed to fetch user from the database")
+  } finally {
+    client.release()
+  }
+}
+export async function getFollowing(currentUserId: string) {
+  const query = `
+SELECT u.id AS user_id, 
+       u.handle, 
+       u.name, 
+       u.image, 
+      FROM users u
+  ON u.id = f_followed."followerId" =$1 AND f_followed."followingId" 
+WHERE u.id <> $1; 
+  `
+  const values = [currentUserId]
+
+  const client = await pool.connect()
+  try {
+    const res = await client.query(query, values)
+    return res.rows
+  } catch (error) {
+    console.error("Error executing query", error)
+    throw new Error("Failed to fetch user from the database")
+  } finally {
+    client.release()
+  }
+}
+export async function getUsersWithFollowStatus(currentUserId: string) {
+  const query = `
+SELECT u.id AS user_id, 
+       u.handle, 
+       u.name, 
+       u.email, 
+       u.image, 
+       COALESCE(f_following."followerId" IS NOT NULL, FALSE) AS following, -- Current user following this user
+       COALESCE(f_followed."followerId" IS NOT NULL, FALSE) AS followed     -- This user following the current user
+FROM users u
+LEFT JOIN follows f_following
+  ON u.id = f_following."followingId" AND f_following."followerId" = $1
+LEFT JOIN follows f_followed
+  ON u.id = f_followed."followerId" AND f_followed."followingId" = $1
+WHERE u.id <> $1; 
+  `
+  const values = [currentUserId]
+
+  const client = await pool.connect()
+  try {
+    const res = await client.query(query, values)
+    return res.rows
+  } catch (error) {
+    console.error("Error executing query", error)
+    throw new Error("Failed to fetch users from the database")
+  } finally {
+    client.release()
+  }
+}
+export async function getUserByHandle(handle: string) {
+  const query = `
+      SELECT *
+      FROM users
+      WHERE handle = $1;
+    `
+  const values = [handle]
+
+  const client = await pool.connect()
+  try {
+    const res = await client.query(query, values)
+    return res.rows
+  } catch (error) {
+    console.error("Error executing query", error)
+    throw new Error("Failed to fetch users from the database")
+  } finally {
+    client.release()
+  }
+}
+
+export async function getReceiverByChatGroupId(userId: string, chatGroupId: string) {
+  console.log("uesrId", userId)
+  console.log("chatGroupId", chatGroupId)
+  const query = `
+    SELECT 
+      CASE 
+        WHEN "senderId" = $1 THEN "receiverId"
+        ELSE "senderId"
+      END AS "receiverId"
+    FROM chats
+    WHERE "groupId" = $2
+    LIMIT 1;
+  `
+  const values = [userId, chatGroupId]
+
+  const client = await pool.connect()
+  try {
+    const res = await client.query(query, values)
+    if (res.rows.length === 0) {
+      throw new Error("No receiver found for the given chat group ID")
+    }
+    const receiverId = res.rows[0].receiverId
+
+    // Fetch the receiver's user details
+    const userQuery = "SELECT * FROM users WHERE id = $1"
+    const userRes = await client.query(userQuery, [receiverId])
+
+    if (userRes.rows.length === 0) {
+      throw new Error("Receiver not found in users table")
+    }
+
+    return userRes.rows[0] // Return the receiver's details
+  } catch (error) {
+    console.error("Error executing query", error)
+    throw new Error("Failed to fetch users from the database")
   } finally {
     client.release()
   }

@@ -1,11 +1,14 @@
+import { auth } from "@/auth"
 import { EditProfile } from "@/components/edit-profile"
 import { ProfileTabs } from "@/components/profile-tabs"
+import { getFollowers, getUserByHandle } from "@/db/query"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
+import { notFound } from "next/navigation"
 
 interface UserProfileProps {
   params: {
-    user: string
+    handle: string
   }
 }
 const avatars = [
@@ -14,35 +17,43 @@ const avatars = [
   { id: 3, src: "/avatar.jpg", alt: "Follower 3" },
 ]
 
-export default function UserProfile({ params }: UserProfileProps) {
+export default async function UserProfile({ params }: UserProfileProps) {
+  const user = await getUserByHandle(params.handle)
+  const session = await auth()
+  if (!session?.user?.id) return null
+  const followings = await getFollowers(session?.user?.id)
+  if (!user) {
+    return notFound()
+  }
+
   return (
     <div className="flex min-h-screen flex-1 flex-col items-center">
       <div className="min-h-screen w-full max-w-[640px]">
         <div className="flex flex-col py-2">
           <div className="flex h-[60xp] w-full items-center justify-center">
-            <p className="p-4">Search</p>
+            <p className="p-4">Profile</p>
           </div>
 
           <div>
-            <main className="bg-primary-foreground border-border flex flex-col rounded-3xl border p-6">
-              <div className="text-primary flex w-full flex-row justify-between">
+            <main className="flex flex-col rounded-3xl border border-border bg-primary-foreground p-6">
+              <div className="flex w-full flex-row justify-between text-primary">
                 <div>
-                  <span className="text-2xl font-bold">Ngan {params.user}</span>
-                  <p className="pt-1">nganle_</p>
+                  <span className="text-2xl font-bold">{user.name}</span>
+                  <p className="pt-1">{user.handle}</p>
                 </div>
 
                 <div className="mt-1 size-[85px] cursor-pointer select-none overflow-hidden rounded-full">
                   <Image
                     className="aspect-square w-full rounded-full object-cover"
-                    src="/ngan.jpg"
+                    src={user.image || "/defaultAvatar.jpg"}
                     alt="logo"
                     width={90}
                     height={90}
                   />
                 </div>
               </div>
-              <div className="text-primary flex flex-col">
-                <p>Wake up early to be successful</p>
+              <div className="flex flex-col text-primary">
+                <p>{user.bio}</p>
               </div>
 
               <div className="mb-7 mt-6 flex flex-row items-center">
@@ -50,7 +61,7 @@ export default function UserProfile({ params }: UserProfileProps) {
                   {avatars.map((avatar, index) => (
                     <div
                       key={avatar.id}
-                      className="border-primary-foreground relative ml-[-6px] rounded-full border-[2px] first:ml-0 first:border-l-0 first:border-r-[2px]">
+                      className="relative ml-[-6px] rounded-full border-[2px] border-primary-foreground first:ml-0 first:border-l-0 first:border-r-[2px]">
                       <Image
                         src={avatar.src}
                         alt={avatar.alt}

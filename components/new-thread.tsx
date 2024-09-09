@@ -1,9 +1,6 @@
 "use client"
 import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { ThreadContent } from "./thread-content"
 import { useState } from "react"
 import { useAtom } from "jotai"

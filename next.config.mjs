@@ -14,6 +14,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "post-image.s3.us-west-002.backblazeb2.com",
       },
+      {
+        protocol: "https",
+        hostname: "example.com",
+      },
     ],
   },
 }
