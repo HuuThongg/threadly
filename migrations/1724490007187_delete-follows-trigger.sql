@@ -3,13 +3,13 @@
 CREATE OR REPLACE FUNCTION delete_follows_on_user_deletion() 
 RETURNS TRIGGER AS $$
 BEGIN
-    DELETE FROM follows WHERE "followerId" = OLD.id OR "followingId" = OLD.id;
+    DELETE FROM follows WHERE "follower_id" = OLD.id OR "following_id" = OLD.id;
     RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
 
 -- Apply the trigger to the users table
-CREATE TRIGGER delete_follows_trigger
+CREATE OR REPLACE TRIGGER delete_follows_trigger
 AFTER DELETE ON users
 FOR EACH ROW
 EXECUTE FUNCTION delete_follows_on_user_deletion();

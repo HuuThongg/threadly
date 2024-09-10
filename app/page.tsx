@@ -7,6 +7,7 @@ import { ChevronDown } from "lucide-react"
 export default async function HomePage() {
   const session = await auth()
   const postsList = await getPosts()
+
   return (
     <div className="flex min-h-screen flex-1 flex-col items-center justify-between px-5">
       <div className="min-h-screen w-full max-w-[640px]">

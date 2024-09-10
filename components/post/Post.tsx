@@ -5,6 +5,7 @@ import { Carousel } from "../carousel"
 import { PostInteraction } from "../post-interaction"
 import { Separator } from "@/components/ui/separator"
 import { UserPostView } from "@/types"
+import { WrapperImage } from "../wrapper-image"
 
 export function Post({ postInfo }: { postInfo: UserPostView }) {
   return (
@@ -39,6 +40,18 @@ export function Post({ postInfo }: { postInfo: UserPostView }) {
           <div className="font-sans text-[15px] tracking-tight">
             {postInfo.content ?? ""}{" "}
           </div>
+          {postInfo.images.length === 1 && (
+            <div>
+              <div className="w-full pt-2">
+                <div className="relative ml-[-72px] w-[calc(100%+96px)]">
+                  <WrapperImage
+                    image_url={postInfo.images[0].image_url}
+                    blur_hash={postInfo.images[0].blur_hash}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
           {/* image caoursel*/}
           {postInfo.images.length > 1 && (
             <div className="w-full pt-2">

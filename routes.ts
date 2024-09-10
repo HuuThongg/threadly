@@ -5,10 +5,15 @@
  */
 export const publicRoutes = [
   "/",
-  "/search",
+  //"/search",
   "/onboarding",
   "/auth/new-verification",
-  "/user",
+  //"/user",
+  "/auth/login",
+  "/auth/register",
+  "/auth/error",
+  "/auth/reset",
+  "/auth/new-password",
 ]
 
 /**
@@ -17,11 +22,11 @@ export const publicRoutes = [
  * @type {string[]}
  */
 export const authRoutes = [
-  "/auth/login",
-  "/auth/register",
-  "/auth/error",
-  "/auth/reset",
-  "/auth/new-password",
+  //"/auth/login",
+  //"/auth/register",
+  //"/auth/error",
+  //"/auth/reset",
+  //"/auth/new-password",
 ]
 
 /**

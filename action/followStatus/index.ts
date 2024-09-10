@@ -2,7 +2,6 @@
 
 import { pool } from "@/db"
 import { getAuthenticatedUser } from "@/lib/db-util"
-import { revalidateTag } from "next/cache"
 import * as z from "zod"
 
 const followSchema = z.object({
@@ -10,7 +9,6 @@ const followSchema = z.object({
 })
 
 export async function followUser(userId: string) {
-  console.log("=====================================,dds", userId)
   const dataParsed = followSchema.safeParse({ userId })
   if (!dataParsed.success) {
     return {
@@ -27,12 +25,11 @@ export async function followUser(userId: string) {
     }
 
     const followQuery = `
-      INSERT INTO follows ("followerId", "followingId")
+      INSERT INTO follows (follower_id, following_id)
       VALUES ($1, $2)
-      ON CONFLICT ("followerId", "followingId") DO NOTHING
+      ON CONFLICT (follower_id,following_id) DO NOTHING
     `
     await client.query(followQuery, [currentUserId, userId])
-    revalidateTag("users")
     return {
       error: undefined,
       message: "User followed successfully",
@@ -66,10 +63,9 @@ export async function unfollowUser(userId: string) {
 
     const unfollowQuery = `
       DELETE FROM follows
-      WHERE "followerId" = $1 AND "followingId" = $2
+      WHERE follower_id= $1 AND following_id= $2
     `
     await client.query(unfollowQuery, [currentUserId, userId])
-    revalidateTag("users")
     return {
       error: undefined,
       message: "User unfollowed successfully",

@@ -2,52 +2,115 @@
 
 import { followUser, unfollowUser } from "@/action/followStatus"
 import { Button } from "@/components/ui/button"
-import { useQueryClient } from "@tanstack/react-query"
+import { UserWithFollowStatus } from "@/types"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useSession } from "next-auth/react"
 
-export function FollowStatusButton({ usersWithFollowStatus, debouncedSearchTerm }) {
+type FollowStatusButtonProps = {
+  usersWithFollowStatus: UserWithFollowStatus
+  debouncedSearchTerm: string
+}
+export function FollowStatusButton({
+  usersWithFollowStatus,
+  debouncedSearchTerm,
+}: FollowStatusButtonProps) {
+  const session = useSession()
   const queryClient = useQueryClient()
 
-  const session = useSession()
-  const handleFollow = async (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    queryClient.invalidateQueries({ queryKey: ["searchUsers", debouncedSearchTerm] })
-    // Optimistically update the cache
-    queryClient.setQueryData(["searchUsers", debouncedSearchTerm], (oldData: any) => {
-      console.log("pppppppppppppppppppppppppppp")
-      if (!oldData) return oldData
-      console.log("oldData", oldData)
-      if (session?.status === "loading" || session?.status === "unauthenticated")
-        return oldData
-      console.log("hellllo", oldData)
+  // Mutation for following a user
+  const followMutation = useMutation({
+    mutationFn: async (user_id: string) => {
+      // Your follow function here
+      await followUser(user_id)
+    },
+    onMutate: async (user_id: string) => {
+      //await queryClient.cancelQueries(['searchUsers', debouncedSearchTerm]);
+      await queryClient.cancelQueries({ queryKey: ["searchUsers", debouncedSearchTerm] })
 
-      // Find the user and update their followed status
-      const updatedUsers = oldData.map((user: any) =>
-        user.id === session.data?.user?.id
-          ? { ...user, following: !user.following }
-          : user,
+      // Snapshot the previous users list
+      const previousUsersList = queryClient.getQueryData([
+        "searchUsers",
+        debouncedSearchTerm,
+      ])
+
+      // Optimistically update the users list
+      queryClient.setQueryData(
+        ["searchUsers", debouncedSearchTerm],
+        (oldData: UserWithFollowStatus[]) => {
+          return oldData.map((user: UserWithFollowStatus) =>
+            user.id === user_id ? { ...user, following: true } : user,
+          )
+        },
       )
 
-      return updatedUsers
-    })
-    await followUser(usersWithFollowStatus.user_id)
-    console.log("alo")
-  }
+      return { previousUsersList }
+    },
+    onError: (err, user_id, context) => {
+      queryClient.setQueryData(
+        ["searchUsers", debouncedSearchTerm],
+        context?.previousUsersList,
+      )
+    },
+    onSettled: () => {
+      //queryClient.invalidateQueries(['searchUsers', debouncedSearchTerm]);
+      queryClient.invalidateQueries({ queryKey: ["searchUsers", debouncedSearchTerm] })
+    },
+  })
+  // Mutation for unfollowing a user
+  const unfollowMutation = useMutation({
+    mutationFn: async (user_id: string) => {
+      // Your unfollow function here
+      await unfollowUser(user_id)
+    },
+    onMutate: async (user_id: string) => {
+      //await queryClient.cancelQueries(['searchUsers', debouncedSearchTerm]);
 
-  const handleUnfollow = async (e) => {
+      await queryClient.cancelQueries({ queryKey: ["searchUsers", debouncedSearchTerm] })
+      const previousUsersList = queryClient.getQueryData([
+        "searchUsers",
+        debouncedSearchTerm,
+      ])
+
+      queryClient.setQueryData(
+        ["searchUsers", debouncedSearchTerm],
+        (oldData: UserWithFollowStatus[]) => {
+          return oldData.map((user: UserWithFollowStatus) =>
+            user.id === user_id ? { ...user, following: false } : user,
+          )
+        },
+      )
+
+      return { previousUsersList }
+    },
+    onError: (err, user_id, context) => {
+      queryClient.setQueryData(
+        ["searchUsers", debouncedSearchTerm],
+        context?.previousUsersList,
+      )
+    },
+    onSettled: () => {
+      //queryClient.invalidateQueries(['searchUsers', debouncedSearchTerm]);
+      queryClient.invalidateQueries({ queryKey: ["searchUsers", debouncedSearchTerm] })
+    },
+  })
+
+  const handleFollow = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     e.stopPropagation()
-    await unfollowUser(usersWithFollowStatus.user_id)
+    followMutation.mutate(usersWithFollowStatus.id)
+  }
+
+  const handleUnfollow = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    unfollowMutation.mutate(usersWithFollowStatus.id)
   }
 
   return (
     <Button
       variant="outline"
       className="scale-100 rounded-xl border-2 border-border active:scale-[1.15]"
-      //onClick={usersWithFollowStatus.following ? handleUnfollow : handleFollow}
       onClick={(e) => {
-        console.log("////////////////////////")
         if (usersWithFollowStatus.following) handleUnfollow(e)
         else handleFollow(e)
       }}>

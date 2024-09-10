@@ -37,11 +37,11 @@ import { useAtom } from "jotai"
 
 import { User } from "@/types"
 interface ChatSideBarProps {
-  group_chat_id: string
+  chat_group_id: string
   receiver: User
 }
 
-export function ChatSideBar({ group_chat_id, receiver }: ChatSideBarProps) {
+export function ChatSideBar({ chat_group_id, receiver }: ChatSideBarProps) {
   const [isExpandChat, _] = useAtom(expandChatAtom)
   const [isOpen, setIsOpen] = useState(false)
   const [isMeidaFileOpen, setIsMeidaFileOpen] = useState(false)

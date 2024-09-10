@@ -3,23 +3,23 @@
 CREATE TABLE IF NOT EXISTS posts
 (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  "userId" UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   content TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 -- Posts table indexes
-CREATE INDEX idx_posts_userId ON posts("userId");
+CREATE INDEX idx_posts_userId ON posts("user_id");
 
 CREATE TABLE IF NOT EXISTS  post_images
 (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  "postId" UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+  post_id UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
   image_url TEXT NOT NULL,
-  "blurHash" TEXT NOT NULL
+  blur_hash TEXT NOT NULL
 );
 -- Post Images table indexes
-CREATE INDEX idx_post_images_postId ON post_images("postId");
+CREATE INDEX idx_post_images_postId ON post_images("post_id");
 
 -- Down Migration
 

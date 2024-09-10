@@ -2,8 +2,13 @@ import Link from "next/link"
 import { Separator } from "@/components/ui/separator"
 import Image from "next/image"
 import { FollowStatusButton } from "./followStatusButton"
+import { UserWithFollowStatus } from "@/types"
 
-export function UserSearchList({ usersList, debouncedSearchTerm }) {
+type UserSearchListProps = {
+  usersList: UserWithFollowStatus[]
+  debouncedSearchTerm: string
+}
+export function UserSearchList({ usersList, debouncedSearchTerm }: UserSearchListProps) {
   return (
     <div>
       {usersList && usersList.length > 0 ? (
@@ -11,7 +16,7 @@ export function UserSearchList({ usersList, debouncedSearchTerm }) {
           <Link
             href={`/${userWithFollowStatus.handle}`}
             className="flex flex-col"
-            key={userWithFollowStatus.user_id}>
+            key={userWithFollowStatus.id}>
             <div className="flex w-full flex-row py-3">
               <div className="mt-1 size-9 scale-100 cursor-pointer select-none overflow-hidden rounded-full border-border">
                 <Image
@@ -30,7 +35,7 @@ export function UserSearchList({ usersList, debouncedSearchTerm }) {
                     {userWithFollowStatus.handle || "userhandle"}
                   </p>
                   <p className="pt-1 text-primary">418K followers</p>
-                  <p>ID: {userWithFollowStatus.user_id}</p>
+                  <p>ID: {userWithFollowStatus.id}</p>
                 </div>
                 <div className="flex items-center">
                   <FollowStatusButton

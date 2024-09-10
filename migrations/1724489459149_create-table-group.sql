@@ -12,14 +12,14 @@ CREATE INDEX idx_groups_name ON groups(name);
 CREATE TABLE IF NOT EXISTS  group_members
 (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  "groupId" UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
-  "userId" UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   joined_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE("groupId", "userId")
+  UNIQUE("group_id", "user_id")
 );
 -- Group Members table indexes
-CREATE INDEX idx_group_members_groupId ON group_members("groupId");
-CREATE INDEX idx_group_members_userId ON group_members("userId");
+CREATE INDEX idx_group_members_groupId ON group_members("group_id");
+CREATE INDEX idx_group_members_userId ON group_members("user_id");
 
 -- Down Migration
 

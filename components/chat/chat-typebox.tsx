@@ -24,7 +24,7 @@ const ChatTypeBox = ({ chat_group_id, receiver }: ChatTypeBoxProps) => {
       e.preventDefault()
       await SendMessage({
         chat_group_id,
-        receiverId: receiver.id,
+        receiver_id: receiver.id,
         message: text,
       })
       console.log("Submit text:", text)

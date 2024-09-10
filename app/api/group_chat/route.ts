@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { pool } from "@/db"
+import { MessageInfo, PartialUser } from "@/types"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(request: NextRequest) {
@@ -20,12 +21,10 @@ export async function GET(request: NextRequest) {
   const client = await pool.connect()
   try {
     await client.query("BEGIN")
-    // Fetch the conversations for the user
-    // Fetch the group chats for the user
     const conversationsQuery = `
-      SELECT "groupId"
+      SELECT group_id
       FROM group_members
-      WHERE "userId" = $1
+      WHERE user_id= $1
       LIMIT 10 OFFSET $2
     `
     const conversationsResult = await client.query(conversationsQuery, [
@@ -39,26 +38,27 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch the latest messages for each group chat
+
     const messagesQuery = `
   WITH LatestMessages AS (
-    SELECT "groupId", MAX(sent_at) AS latest_sent_at
+    SELECT group_id, MAX(sent_at) AS latest_sent_at
     FROM chats
-    WHERE "groupId" = ANY($1::uuid[])
-    GROUP BY "groupId"
+    WHERE group_id= ANY($1::uuid[])
+    GROUP BY group_id
   )
-  SELECT c."groupId", c."senderId", c."receiverId", c.message, c.sent_at
+  SELECT c.group_id, c.sender_id, c.receiver_id, c.message, c.sent_at
   FROM chats c
   JOIN LatestMessages lm
-  ON c."groupId" = lm."groupId" AND c.sent_at = lm.latest_sent_at
+  ON c.group_id= lm.group_id AND c.sent_at = lm.latest_sent_at
 `
     const messagesResult = await client.query(messagesQuery, [groupChatIds])
-    const messagesData = messagesResult.rows
+    const messagesData = messagesResult.rows as MessageInfo[]
 
     // Fetch user details for each sender and receiver
     const userIds = Array.from(
       new Set([
-        ...messagesData.map((msg) => msg.senderId),
-        ...messagesData.map((msg) => msg.receiverId),
+        ...messagesData.map((msg) => msg.sender_id),
+        ...messagesData.map((msg) => msg.receiver_id),
       ]),
     )
 
@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
       WHERE id = ANY($1::uuid[])
     `
     const usersResult = await client.query(usersQuery, [userIds])
-    const usersData = usersResult.rows
+    const usersData = usersResult.rows as PartialUser[]
 
     // Map users to their IDs
     const usersMap = new Map(usersData.map((user) => [user.id, user]))
@@ -77,14 +77,14 @@ export async function GET(request: NextRequest) {
     const conversationsWithDetails = messagesData.map((message) => {
       // Determine the chat partner's ID
       const chatPartnerId =
-        message.senderId === userId ? message.receiverId : message.senderId
+        message.sender_id === userId ? message.receiver_id : message.sender_id
 
       return {
-        groupChatId: message.groupId,
+        chat_group_id: message.group_id,
         lastMessage: message.message,
         lastMessageTimestamp: message.sent_at,
-        chatPartner: usersMap.get(chatPartnerId), // Get the chat partner’s information
-        isSentByCurrentUser: message.senderId === userId,
+        chatPartner: usersMap.get(chatPartnerId)!,
+        isSentByCurrentUser: message.sender_id === userId,
       }
     })
 

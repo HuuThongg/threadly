@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
 import "./globals.css"
-
 import { Inter as FontSans } from "next/font/google"
 
 import { cn } from "@/lib/utils"
@@ -9,6 +8,7 @@ import { Provider } from "@/components/provider"
 import { Toaster } from "@/components/ui/toaster"
 import { FloatingButton } from "@/components/floating-button"
 import { auth } from "@/auth"
+import { DevTools } from "@/components/DevTool"
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -41,6 +41,7 @@ export default async function RootLayout({
           </div>
           {session !== null && session?.user ? <FloatingButton /> : null}
           <Toaster />
+          <DevTools />
         </body>
       </html>
     </Provider>

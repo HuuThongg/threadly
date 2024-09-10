@@ -7,11 +7,11 @@ import { useState } from "react"
 
 import { ReplyIcon } from "@/components/icons"
 import React, { useRef } from "react"
-import { User } from "@/types"
+import { MessageChat, User } from "@/types"
 import { useWindowSize } from "@uidotdev/usehooks"
 import { EllipsisVerticalIcon, Laugh } from "lucide-react"
 
-const fetchMessages = async (chat_group_id, pageParam = null) => {
+const fetchMessages = async (chat_group_id: string, pageParam = null) => {
   const response = await fetch(
     `/api/messages?chat_group_id=${chat_group_id}&cursor=${pageParam}&limit=4`,
   )
@@ -25,11 +25,16 @@ interface ChatProps {
   chat_group_id: string
   receiver: User
 }
+interface GroupChatMessageProps {
+  messages: MessageChat[]
+  nextId?: number
+  previousId?: number
+}
 const ChatMessages = ({ chat_group_id, receiver }: ChatProps) => {
   const { ref, inView } = useInView()
   const messageBoxRef = useRef<HTMLDivElement>(null)
   const { data, error, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useInfiniteQuery({
+    useInfiniteQuery<GroupChatMessageProps, Error>({
       queryKey: ["group_chat_messages", chat_group_id],
       queryFn: async ({ pageParam }) => {
         const res = await fetchMessages(chat_group_id, pageParam)
@@ -54,8 +59,8 @@ const ChatMessages = ({ chat_group_id, receiver }: ChatProps) => {
         }
       },
       initialPageParam: null,
-      getPreviousPageParam: (firstPage) => firstPage.prevCursor ?? undefined,
-      getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+      getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,
+      getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
       maxPages: 5,
     })
 
@@ -133,10 +138,7 @@ const ChatMessages = ({ chat_group_id, receiver }: ChatProps) => {
                                 <div className="relative flex h-full w-full overflow-hidden rounded-full">
                                   <Image
                                     className="h-full w-full object-cover"
-                                    src={
-                                      message?.user?.avatar_url ||
-                                      "/images/defaultAvatar.png"
-                                    }
+                                    src={null || "/images/defaultAvatar.png"}
                                     alt="avatar"
                                     width={28}
                                     height={28}

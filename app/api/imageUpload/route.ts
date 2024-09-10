@@ -51,7 +51,6 @@ export async function POST(request: NextRequest) {
       Body: resizedImageBuffer,
       ContentType: "image/jpeg",
     })
-    console.log("-----------------")
     const uploadResponse = await s3Client.send(uploadCommand)
     console.log("helllo")
     if (!uploadResponse) {

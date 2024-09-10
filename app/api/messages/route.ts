@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { pool } from "@/db"
+import { MessageChat } from "@/types"
 import { NextRequest, NextResponse } from "next/server"
 export async function GET(request: NextRequest) {
   const session = await auth()
@@ -15,11 +16,11 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
   const cursor = searchParams.get("cursor")
   const groupChatId = searchParams.get("chat_group_id")
-  const limit = searchParams.get("limit") || "4"
+  const limit = searchParams.get("limit") || "10"
 
   let query = `
     SELECT * FROM chats
-    WHERE "groupId" = $1
+    WHERE group_id= $1
 `
   let values: any = []
   values = [groupChatId]
@@ -47,7 +48,8 @@ export async function GET(request: NextRequest) {
   console.log("values :", values)
   console.log("query :", query)
   try {
-    const { rows } = await client.query(query, values)
+    const res = await client.query(query, values)
+    const rows = res.rows as MessageChat[]
     console.log("rowwwwwwwwwwwwwws", rows)
 
     // If there are rows, get the cursor for the next page

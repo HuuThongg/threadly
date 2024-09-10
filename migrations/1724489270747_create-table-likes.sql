@@ -3,17 +3,17 @@
 CREATE TABLE IF NOT EXISTS  likes
 (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  "postId" UUID REFERENCES posts(id) ON DELETE CASCADE,
-  "commentId" UUID REFERENCES comments(id) ON DELETE CASCADE,
-   "userId" UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  "liked_at" TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE("postId","userId"),
-  UNIQUE("commentId","userId")
+  post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
+  comment_id UUID REFERENCES comments(id) ON DELETE CASCADE,
+   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  liked_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE("post_id","user_id"),
+  UNIQUE("comment_id","user_id")
 );
 -- Likes table indexes
-  CREATE INDEX idx_likes_postId ON likes("postId");
-CREATE INDEX idx_likes_commentId ON likes("commentId");
-CREATE INDEX idx_likes_userId ON likes("userId");
+  CREATE INDEX idx_likes_postId ON likes("post_id");
+CREATE INDEX idx_likes_commentId ON likes("comment_id");
+CREATE INDEX idx_likes_userId ON likes("user_id");
 -- Down Migration
 
 DROP INDEX IF EXISTS idx_likes_postId;

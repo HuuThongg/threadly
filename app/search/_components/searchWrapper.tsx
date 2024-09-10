@@ -1,10 +1,12 @@
 "use client"
+
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useDebounce } from "@uidotdev/usehooks"
 import { useQuery } from "@tanstack/react-query"
 import { UserSearchList } from "./UsersSearchList"
+import { UserWithFollowStatus } from "@/types"
 
 const fetchUsers = async (query: string) => {
   const response = await fetch(`/api/searchUsers?query=${query}`)
@@ -13,6 +15,7 @@ const fetchUsers = async (query: string) => {
   }
   return response.json()
 }
+
 export function SearchWrapper() {
   const [searchTerm, setSearchTerm] = useState("")
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
@@ -21,10 +24,10 @@ export function SearchWrapper() {
     data: usersList,
     error,
     isFetching,
-  } = useQuery({
+  } = useQuery<UserWithFollowStatus[]>({
     queryKey: ["searchUsers", debouncedSearchTerm],
     queryFn: () => fetchUsers(debouncedSearchTerm),
-    enabled: !!debouncedSearchTerm,
+    enabled: !!debouncedSearchTerm, // Ensure this only runs when debouncedSearchTerm is truthy
     staleTime: 5000,
   })
 
@@ -44,7 +47,6 @@ export function SearchWrapper() {
           className="rounded-none border-0 border-none bg-transparent text-primary shadow-none focus-visible:border-0 focus-visible:border-none focus-visible:outline-none focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0"
         />
       </div>
-
       <div className="py-3 text-nonative">
         <p>Follows suggestions</p>
       </div>

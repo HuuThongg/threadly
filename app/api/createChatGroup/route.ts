@@ -36,15 +36,15 @@ export async function POST(request: NextRequest) {
     // Extract the group chat ID from the query result
     const groupChatId = groupChat.rows[0].id
 
-    await client.query(
-      `INSERT INTO group_members ("groupId", "userId") VALUES ($1, $2)`,
-      [groupChatId, userId],
-    )
+    await client.query(`INSERT INTO group_members (group_id,user_id) VALUES ($1, $2)`, [
+      groupChatId,
+      userId,
+    ])
 
-    await client.query(
-      `INSERT INTO group_members ("groupId", "userId") VALUES ($1, $2)`,
-      [groupChatId, otherUserId],
-    )
+    await client.query(`INSERT INTO group_members (group_id,user_id) VALUES ($1, $2)`, [
+      groupChatId,
+      otherUserId,
+    ])
 
     await client.query("COMMIT")
     // Return the chat group ID

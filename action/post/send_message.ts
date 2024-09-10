@@ -7,7 +7,7 @@ import * as z from "zod"
 // Define the schema for validating the input
 const sendMessageSchema = z.object({
   chat_group_id: z.string().uuid(),
-  receiverId: z.string().uuid(),
+  receiver_id: z.string().uuid(),
   message: z.string().min(5, "Message must be at least 5 characters long."),
 })
 
@@ -17,14 +17,14 @@ type SendMessageProps = z.infer<typeof sendMessageSchema>
 // Define the SendMessage function
 export default async function SendMessage({
   chat_group_id,
-  receiverId,
+  receiver_id,
   message,
 }: SendMessageProps) {
   const client = await pool.connect()
   try {
     const parsed = sendMessageSchema.safeParse({
       chat_group_id,
-      receiverId,
+      receiver_id,
       message,
     })
 
@@ -44,12 +44,12 @@ export default async function SendMessage({
 
     const {
       chat_group_id: validGroupChatId,
-      receiverId: validReceiverId,
+      receiver_id: validReceiverId,
       message: validMessage,
     } = parsed.data
 
     const query = `
-INSERT INTO chats ("senderId","receiverId", "groupId", "message")
+INSERT INTO chats (sender_id,receiver_id,group_id, "message")
  VALUES ($1, $2, $3, $4)
       RETURNING id
 

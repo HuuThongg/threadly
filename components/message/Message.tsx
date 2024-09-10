@@ -8,7 +8,13 @@ import React from "react"
 import { usePathname } from "next/navigation"
 import { useRouter } from "next/navigation"
 import { Plus } from "lucide-react"
+import { chatGroupView } from "@/types"
 
+interface ConversationsPage {
+  data: chatGroupView[]
+  nextId?: number // Adjust this type according to your backend response
+  previousId?: number // Adjust this type according to your backend response
+}
 const Messages = () => {
   const { ref, inView } = useInView()
   const router = useRouter()
@@ -23,7 +29,7 @@ const Messages = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
-  } = useInfiniteQuery({
+  } = useInfiniteQuery<ConversationsPage, Error>({
     queryKey: ["messages"],
     queryFn: async ({ pageParam = 0 }) => {
       const res = await fetch(`/api/group_chat?cursor=${pageParam}`)
@@ -55,12 +61,12 @@ const Messages = () => {
           {data.pages.map((group, i) => (
             <React.Fragment key={i}>
               {group.data.map((group_chat) => (
-                <div className="relative px-2" key={group_chat.groupChatId}>
+                <div className="relative px-2" key={group_chat.chat_group_id}>
                   <button
                     className="group/item hover:bg-third-clr relative m-0 flex w-full flex-col rounded-lg p-2 group-hover/edit:bg-red-500"
                     onClick={() => {
                       if (isHasMessagePath) {
-                        router.push(`/messages/${group_chat.groupChatId}`)
+                        router.push(`/messages/${group_chat.chat_group_id}`)
                       } else {
                         //addMessageId(message);
                       }

@@ -9,7 +9,6 @@ export default function SearchPage() {
             <p className="m-4">Search</p>
           </div>
           <SearchWrapper />
-          <div></div>
         </div>
       </div>
     </div>
