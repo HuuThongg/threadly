@@ -34,6 +34,7 @@ export default async function SendMessage({
     console.log("receiver_id", receiver_id)
     console.log("message", message)
     if (!parsed.success) {
+      console.log("parsed is not success")
       return {
         message: parsed.error.flatten().fieldErrors,
       }

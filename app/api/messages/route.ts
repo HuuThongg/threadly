@@ -42,10 +42,12 @@ export async function GET(request: NextRequest) {
     const res = await client.query(query, values)
     const rows = res.rows as MessageChat[]
     const messageChatWithSentByWho = rows.map((row) => {
-      const isSentByCurrentUser = row.sender_id === userId
+      const isSentByCurrentUser = row.sender_id === userId;
       return { ...row, isSentByCurrentUser }
-    })
+    }).reverse()
     console.log("MessageChatWithSentByWho0", messageChatWithSentByWho)
+
+
 
     // Determine if there are more messages to fetch
     const hasMoreMessages = rows.length === parseInt(limit)

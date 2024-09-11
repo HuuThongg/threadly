@@ -51,58 +51,58 @@ const ChatTypeBox = ({ chat_group_id, receiver, sender_id }: ChatTypeBoxProps) =
       await queryClient.cancelQueries({
         queryKey: ["group_chat_messages", chat_group_id],
       })
-
-      // Snapshot the previous users list
       const previousMessages = queryClient.getQueryData<GroupChatMessageReactQuery>([
         "group_chat_messages",
         chat_group_id,
-      ])
+      ]);
 
-      if (previousMessages && previousMessages.pages.length > 0) {
-        // Access the messages array from the first page
-        const firstPage = previousMessages.pages[0]
-
-        if (Array.isArray(firstPage.messages)) {
-          try {
-            queryClient.setQueryData<GroupChatMessageReactQuery>(
-              ["group_chat_messages", chat_group_id],
-              {
-                ...previousMessages,
-                pages: [
-                  {
-                    ...firstPage,
-                    messages: [
-                      {
-                        group_id: chat_group_id,
-                        id: uuidv4().toString(),
-                        sender_id,
-                        receiver_id: receiver.id,
-                        message: text,
-                        isSentByCurrentUser: true,
-                        sent_at: new Date(),
-                      } as MessageType,
-
-                      ...firstPage.messages,
-                    ],
-                  },
-                  // If there are additional pages, include them as they are
-                  ...previousMessages.pages.slice(1),
-                ],
-              },
-            )
-            const updateData = queryClient.getQueryData([
-              "group_chat_messages",
-              chat_group_id,
-            ])
-            console.log("done update", updateData)
-          } catch (error) {
-            console.error("Error updating cache:", error)
-          }
-        } else {
-          console.error("Error: `firstPage.messages` is not an array", firstPage)
+      try {
+        // Ensure we have previous messages to work with
+        if (!previousMessages) {
+          throw new Error("No previous messages found in query cache.");
         }
-      } else {
-        console.error("Error: No pages available in `previousMessages`", previousMessages)
+
+        // Get the last page index
+        const lastPageIndex = previousMessages.pages.length - 1;
+
+        // Construct the new message
+        const newMessage: MessageType = {
+          group_id: chat_group_id,
+          id: uuidv4().toString(),
+          sender_id,
+          receiver_id: receiver.id,
+          message: text,
+          isSentByCurrentUser: true,
+          sent_at: new Date(),
+        };
+
+        // Append the new message to the last page's messages
+        const updatedPages = previousMessages.pages.map((page, index) => {
+          if (index === lastPageIndex) {
+            // Update the last page by appending the new message
+            return {
+              ...page,
+              messages: [...page.messages, newMessage],
+            };
+          }
+          // Return other pages unchanged
+          return page;
+        });
+
+        // Set the updated data back into the query cache
+        queryClient.setQueryData<GroupChatMessageReactQuery>(
+          ["group_chat_messages", chat_group_id],
+          {
+            ...previousMessages,
+            pages: updatedPages,
+          }
+        );
+
+        // Log the updated data for verification
+        const updatedData = queryClient.getQueryData(["group_chat_messages", chat_group_id]);
+        console.log("Done updating cache:", updatedData);
+      } catch (error) {
+        console.error("Error updating cache:", error);
       }
       return { previousMessages }
     },
@@ -113,7 +113,7 @@ const ChatTypeBox = ({ chat_group_id, receiver, sender_id }: ChatTypeBoxProps) =
       )
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["group_chat_messages", chat_group_id] })
+      //queryClient.invalidateQueries({ queryKey: ["group_chat_messages", chat_group_id] })
       setText("")
       setIsTyping(false)
     },
