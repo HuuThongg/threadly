@@ -28,6 +28,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: "/auth/login",
     error: "/auth/error",
   },
+
   //events: {
   //  async linkAccount({ user }) {
   //
@@ -35,6 +36,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   //},
   debug: process.env.NODE_ENV !== "production" ? true : false,
   session: { strategy: "jwt" },
+  trustHost: true
+  ,
   ...authConfig,
 })
 
