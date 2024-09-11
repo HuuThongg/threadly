@@ -19,9 +19,10 @@ export interface MessageBox extends Message {
 interface ChatProps {
   chat_group_id: string
   receiver: User
+  sender_id: string
 }
 
-export const Chat = ({ chat_group_id, receiver }: ChatProps) => {
+export const Chat = ({ chat_group_id, receiver, sender_id }: ChatProps) => {
   return (
     <div className="h-full w-full">
       <div className="relative h-full">
@@ -35,7 +36,11 @@ export const Chat = ({ chat_group_id, receiver }: ChatProps) => {
               {/* messages */}
               <ChatMessages chat_group_id={chat_group_id} receiver={receiver} />
               {/* type message */}
-              <ChatTypeBox chat_group_id={chat_group_id} receiver={receiver} />
+              <ChatTypeBox
+                chat_group_id={chat_group_id}
+                receiver={receiver}
+                sender_id={sender_id}
+              />
             </div>
           </div>
         </div>

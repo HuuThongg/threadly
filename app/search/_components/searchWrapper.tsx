@@ -9,7 +9,7 @@ import { UserSearchList } from "./UsersSearchList"
 import { UserWithFollowStatus } from "@/types"
 
 const fetchUsers = async (query: string) => {
-  const response = await fetch(`/api/searchUsers?query=${query}`)
+  const response = await fetch(`/api/users/user-follow-search?query=${query}`)
   if (!response.ok) {
     throw new Error("Network response was not ok")
   }
@@ -25,7 +25,7 @@ export function SearchWrapper() {
     error,
     isFetching,
   } = useQuery<UserWithFollowStatus[]>({
-    queryKey: ["searchUsers", debouncedSearchTerm],
+    queryKey: ["user-follow-search", debouncedSearchTerm],
     queryFn: () => fetchUsers(debouncedSearchTerm),
     enabled: !!debouncedSearchTerm, // Ensure this only runs when debouncedSearchTerm is truthy
     staleTime: 5000,
@@ -50,7 +50,9 @@ export function SearchWrapper() {
       <div className="py-3 text-nonative">
         <p>Follows suggestions</p>
       </div>
-      <UserSearchList debouncedSearchTerm={debouncedSearchTerm} usersList={usersList} />
+      {usersList && (
+        <UserSearchList debouncedSearchTerm={debouncedSearchTerm} usersList={usersList} />
+      )}
     </main>
   )
 }

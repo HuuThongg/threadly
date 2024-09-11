@@ -6,6 +6,7 @@ import { PostInteraction } from "../post-interaction"
 import { Separator } from "@/components/ui/separator"
 import { UserPostView } from "@/types"
 import { WrapperImage } from "../wrapper-image"
+import { WrapperImage1 } from "../wrapper-image1"
 
 export function Post({ postInfo }: { postInfo: UserPostView }) {
   return (
@@ -25,7 +26,7 @@ export function Post({ postInfo }: { postInfo: UserPostView }) {
         <div className="col-start-2 row-start-1 self-start">
           <div className="flex justify-between">
             <div className="font-medium">
-              My name
+              {postInfo.user_name}
               <span className="pl-1 text-[14px] font-normal text-nonative">23h</span>
             </div>
             <Button
@@ -43,17 +44,49 @@ export function Post({ postInfo }: { postInfo: UserPostView }) {
           {postInfo.images.length === 1 && (
             <div>
               <div className="w-full pt-2">
-                <div className="relative ml-[-72px] w-[calc(100%+96px)]">
-                  <WrapperImage
+                <div className="relative w-full">
+                  <div className="relative overflow-hidden rounded-lg">
+                    {/* Placeholder */}
+
+                    {/* Main Image */}
+                    <img
+                      src={postInfo.images[0].image_url}
+                      alt="chigai"
+                      className={`object-cover}`}
+                    />
+                  </div>
+
+                  {/*<WrapperImage1
                     image_url={postInfo.images[0].image_url}
                     blur_hash={postInfo.images[0].blur_hash}
-                  />
+                  />*/}
+                </div>
+              </div>
+            </div>
+          )}
+          {postInfo.images.length === 2 && (
+            <div>
+              <div className="w-full pt-2">
+                <div className="relative h-auto w-full">
+                  <div className="flex h-auto w-full flex-row gap-x-2">
+                    {postInfo.images.map((image) => (
+                      <div
+                        className="h-[263px] w-[265px] cursor-pointer select-none"
+                        key={image.image_url}>
+                        <WrapperImage1
+                          image_url={image.image_url}
+                          blur_hash={image.blur_hash}
+                          key={image.blur_hash}
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
           )}
           {/* image caoursel*/}
-          {postInfo.images.length > 1 && (
+          {postInfo.images.length > 2 && (
             <div className="w-full pt-2">
               <div className="relative ml-[-72px] w-[calc(100%+96px)]">
                 <Carousel postImages={postInfo.images} />

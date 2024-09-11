@@ -144,48 +144,56 @@ export async function getUserProfileById(userId: string): Promise<PartialUser> {
     client.release()
   }
 }
+export async function getUserByHandle(handle: string): Promise<User> {
+  const query = `
+    SELECT *
+    FROM users
+    WHERE handle = $1;
+  `
+  const values = [handle]
+
+  try {
+    const res = await pool.query(query, values)
+    return res.rows[0] as User
+  } catch (error) {
+    console.error("Error executing query", error)
+    throw new Error("Failed to search users")
+  }
+}
 
 export async function searchUsers(
   currentUserId: string,
   searchTerm: string,
-): Promise<UserWithFollowStatus[]> {
-  const query = `
-    SELECT u.id AS user_id, 
-           u.handle, 
-           u.name, 
-           u.email, 
-           u.image, 
-           u.bio, 
-           u.gender, 
-           COALESCE(f_following."followerId" IS NOT NULL, FALSE) AS following, -- Current user following this user
-           COALESCE(f_followed."followerId" IS NOT NULL, FALSE) AS followed,   -- This user following the current user
-           ts_rank(u.search_vector, query) AS rank
-    FROM users u
-    LEFT JOIN follows f_following
-      ON u.id = f_following."followingId" AND f_following."followerId" = $1
-    LEFT JOIN follows f_followed
-      ON u.id = f_followed."followerId" AND f_followed."followingId" = $1
-    CROSS JOIN to_tsquery('english', $2) query
-    WHERE u.search_vector @@ query
-      AND u.id <> $1
-    ORDER BY rank DESC;
-  `
+): Promise<PartialUser[]> {
+  //const query = `
+  //  SELECT u.id,
+  //         u.handle,
+  //         u.name,
+  //         u.email,
+  //         u.image,
+  //         u.bio,
+  //         u.gender,
+  //         COALESCE(f_following."followerId" IS NOT NULL, FALSE) AS following, -- Current user following this user
+  //         COALESCE(f_followed."followerId" IS NOT NULL, FALSE) AS followed,   -- This user following the current user
+  //         ts_rank(u.search_vector, query) AS rank
+  //  FROM users u
+  //  LEFT JOIN follows f_following
+  //    ON u.id = f_following."followingId" AND f_following."followerId" = $1
+  //  LEFT JOIN follows f_followed
+  //    ON u.id = f_followed."followerId" AND f_followed."followingId" = $1
+  //  CROSS JOIN to_tsquery('english', $2) query
+  //  WHERE u.search_vector @@ query
+  //    AND u.id <> $1
+  //  ORDER BY rank DESC;
+  //`
 
   const query1 = `
-  SELECT u.id AS user_id, 
+  SELECT u.id, 
          u.handle, 
          u.name, 
-         u.email, 
-         u.image, 
-         u.bio, 
-         u.gender, 
-         COALESCE(f_following.follower_id IS NOT NULL, FALSE) AS following, -- Current user following this user
-         COALESCE(f_followed.follower_id IS NOT NULL, FALSE) AS followed    -- This user following the current user
-  FROM users u
-  LEFT JOIN follows f_following
-    ON u.id = f_following.following_id AND f_following.follower_id = $1
-  LEFT JOIN follows f_followed
-    ON u.id = f_followed.follower_id AND f_followed.following_id = $1
+         u.image
+          FROM users u
+ 
   WHERE u.id <> $1 AND (u.handle ILIKE '%' || $2 || '%' OR u.name ILIKE '%' || $2 || '%');
 `
 
@@ -198,7 +206,7 @@ export async function searchUsers(
   const client = await pool.connect()
   try {
     const res = await client.query(query1, values)
-    return res.rows as UserWithFollowStatus[]
+    return res.rows as PartialUser[]
   } catch (error) {
     console.error("Error executing query", error)
     throw new Error("Failed to search users")
@@ -462,23 +470,26 @@ WHERE u.id <> $1;
 }
 export async function getUsersWithFollowStatus(
   currentUserId: string,
+  searchTerm: string,
 ): Promise<UserWithFollowStatus[]> {
   const query = `
-SELECT u.id, 
-       u.handle, 
-       u.name, 
-       u.email, 
-       u.image, 
-       COALESCE(f_following.follower_id IS NOT NULL, FALSE) AS following, -- Current user following this user
-       COALESCE(f_followed.follower_id IS NOT NULL, FALSE) AS followed     -- This user following the current user
-FROM users u
-LEFT JOIN follows f_following
-  ON u.id = f_following.following_id AND f_following.follower_id= $1
-LEFT JOIN follows f_followed
-  ON u.id = f_followed.follower_id AND f_followed.following_id= $1
-WHERE u.id <> $1; 
-  `
-  const values = [currentUserId]
+  SELECT u.id, 
+         u.handle, 
+         u.name, 
+         u.email, 
+         u.image, 
+         u.bio, 
+         u.gender, 
+         COALESCE(f_following.follower_id IS NOT NULL, FALSE) AS following, -- Current user following this user
+         COALESCE(f_followed.follower_id IS NOT NULL, FALSE) AS followed    -- This user following the current user
+  FROM users u
+  LEFT JOIN follows f_following
+    ON u.id = f_following.following_id AND f_following.follower_id = $1
+  LEFT JOIN follows f_followed
+    ON u.id = f_followed.follower_id AND f_followed.following_id = $1
+  WHERE u.id <> $1 AND (u.handle ILIKE '%' || $2 || '%' OR u.name ILIKE '%' || $2 || '%');
+`
+  const values = [currentUserId, searchTerm]
 
   const client = await pool.connect()
   try {
@@ -486,27 +497,7 @@ WHERE u.id <> $1;
     return res.rows as UserWithFollowStatus[]
   } catch (error) {
     console.error("Error executing query", error)
-    throw new Error("Failed to fetch users from the database")
-  } finally {
-    client.release()
-  }
-}
-
-export async function getUserByHandle(handle: string): Promise<User> {
-  const query = `
-      SELECT *
-      FROM users
-      WHERE handle = $1;
-    `
-  const values = [handle]
-
-  const client = await pool.connect()
-  try {
-    const res = await client.query(query, values)
-    return res.rows[0] as User
-  } catch (error) {
-    console.error("Error executing query", error)
-    throw new Error("Failed to fetch users from the database")
+    throw new Error("Failed to search users")
   } finally {
     client.release()
   }
@@ -517,24 +508,36 @@ export async function getReceiverByChatGroupId(
   chatGroupId: string,
 ): Promise<User> {
   const query = `
-    SELECT 
-      CASE 
-        WHEN sender_id = $1 THEN receiver_id
-        ELSE sender_id
-      END AS receiver_id
-    FROM chats
-    WHERE group_id = $2
-    LIMIT 1;
+    SELECT EXISTS (
+     SELECT 1
+    FROM chat_groups
+    WHERE id = $1)
   `
-  const values = [userId, chatGroupId]
+  const values = [chatGroupId]
 
   const client = await pool.connect()
   try {
     const res = await client.query(query, values)
-    if (res.rows.length === 0) {
+    if (!res.rows[0].exists) {
       throw new Error("No receiver found for the given chat group ID")
     }
-    const receiverId = res.rows[0].receiverId
+
+    const groupMemberQuery = `
+SELECT 
+  user_id
+FROM group_members
+WHERE 
+  group_id = $1
+  AND user_id != $2 
+LIMIT 1;
+`
+    const groupMemberQueryValues = [chatGroupId, userId]
+    const groupMemberResult = await client.query(groupMemberQuery, groupMemberQueryValues)
+
+    if (groupMemberResult.rows.length === 0) {
+      throw new Error("THe person is not in the group chat")
+    }
+    const receiverId = groupMemberResult.rows[0].user_id
 
     // Fetch the receiver's user details
     const userQuery = "SELECT * FROM users WHERE id = $1"

@@ -1,5 +1,5 @@
 import { auth } from "@/auth"
-import { getUserByHandle, searchUsers } from "@/db/query"
+import { getUsersWithFollowStatus } from "@/db/query"
 
 import { NextRequest, NextResponse } from "next/server"
 export async function GET(request: NextRequest) {
@@ -19,10 +19,7 @@ export async function GET(request: NextRequest) {
   if (!query || typeof query !== "string") {
     return NextResponse.json({ ok: false }, { status: 201 })
   }
-  console.log("userId", userId)
-  const users = await searchUsers(userId, query)
+  const users = await getUsersWithFollowStatus(userId, query)
 
   return NextResponse.json(users)
 }
-
-// Utility function to generate BlurHash

@@ -14,9 +14,7 @@ export function FollowStatusButton({
   usersWithFollowStatus,
   debouncedSearchTerm,
 }: FollowStatusButtonProps) {
-  const session = useSession()
   const queryClient = useQueryClient()
-
   // Mutation for following a user
   const followMutation = useMutation({
     mutationFn: async (user_id: string) => {
@@ -25,17 +23,19 @@ export function FollowStatusButton({
     },
     onMutate: async (user_id: string) => {
       //await queryClient.cancelQueries(['searchUsers', debouncedSearchTerm]);
-      await queryClient.cancelQueries({ queryKey: ["searchUsers", debouncedSearchTerm] })
+      await queryClient.cancelQueries({
+        queryKey: ["user-follow-search", debouncedSearchTerm],
+      })
 
       // Snapshot the previous users list
       const previousUsersList = queryClient.getQueryData([
-        "searchUsers",
+        "user-follow-search",
         debouncedSearchTerm,
       ])
 
       // Optimistically update the users list
       queryClient.setQueryData(
-        ["searchUsers", debouncedSearchTerm],
+        ["user-follow-search", debouncedSearchTerm],
         (oldData: UserWithFollowStatus[]) => {
           return oldData.map((user: UserWithFollowStatus) =>
             user.id === user_id ? { ...user, following: true } : user,
@@ -47,7 +47,7 @@ export function FollowStatusButton({
     },
     onError: (err, user_id, context) => {
       queryClient.setQueryData(
-        ["searchUsers", debouncedSearchTerm],
+        ["user-follow-search", debouncedSearchTerm],
         context?.previousUsersList,
       )
     },
@@ -65,14 +65,16 @@ export function FollowStatusButton({
     onMutate: async (user_id: string) => {
       //await queryClient.cancelQueries(['searchUsers', debouncedSearchTerm]);
 
-      await queryClient.cancelQueries({ queryKey: ["searchUsers", debouncedSearchTerm] })
+      await queryClient.cancelQueries({
+        queryKey: ["user-follow-search", debouncedSearchTerm],
+      })
       const previousUsersList = queryClient.getQueryData([
-        "searchUsers",
+        "user-follow-search",
         debouncedSearchTerm,
       ])
 
       queryClient.setQueryData(
-        ["searchUsers", debouncedSearchTerm],
+        ["user-follow-search", debouncedSearchTerm],
         (oldData: UserWithFollowStatus[]) => {
           return oldData.map((user: UserWithFollowStatus) =>
             user.id === user_id ? { ...user, following: false } : user,
@@ -84,7 +86,7 @@ export function FollowStatusButton({
     },
     onError: (err, user_id, context) => {
       queryClient.setQueryData(
-        ["searchUsers", debouncedSearchTerm],
+        ["user-follow-search", debouncedSearchTerm],
         context?.previousUsersList,
       )
     },

@@ -21,19 +21,24 @@ export default async function SendMessage({
   message,
 }: SendMessageProps) {
   const client = await pool.connect()
+  console.log("sending .................. ")
+
   try {
     const parsed = sendMessageSchema.safeParse({
       chat_group_id,
       receiver_id,
       message,
     })
-
+    console.log("parsing...................")
+    console.log("chat_group_id", chat_group_id)
+    console.log("receiver_id", receiver_id)
+    console.log("message", message)
     if (!parsed.success) {
       return {
         message: parsed.error.flatten().fieldErrors,
       }
     }
-
+    console.log("parsed success")
     const session = await auth()
     const userId = session?.user?.id
     if (!session || !userId) {
@@ -64,7 +69,6 @@ INSERT INTO chats (sender_id,receiver_id,group_id, "message")
 
     console.log("Message sent successfully.")
 
-    revalidatePath("/")
     return {
       message: "Message sent successfully.",
     }

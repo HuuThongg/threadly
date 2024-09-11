@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
       userId,
       cursorNumber,
     ])
-    const groupChatIds = conversationsResult.rows.map((row) => row.groupId)
+    const groupChatIds = conversationsResult.rows.map((row) => row.group_id)
 
     if (groupChatIds.length === 0) {
       return NextResponse.json({ data: [], nextId: null, previousId: null })
@@ -87,8 +87,6 @@ export async function GET(request: NextRequest) {
         isSentByCurrentUser: message.sender_id === userId,
       }
     })
-
-    console.log("conversationsWithDetails", conversationsWithDetails)
 
     // Determine next and previous cursor
     const nextCursor = conversationsWithDetails.length > 0 ? cursorNumber + 10 : null

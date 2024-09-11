@@ -29,17 +29,8 @@ export async function GET(request: NextRequest) {
   console.log("cursor", cursor)
   // Add cursor-based filtering only if cursor is provided and not 'null'
   if (cursor && cursor !== "null") {
-    const parsedCursor = new Date(parseInt(cursor, 10)) // Convert to Date from timestamp
-    if (!isNaN(parsedCursor.getTime())) {
-      // Ensure valid date
-      // Format cursor to ISO 8601 for compatibility with PostgreSQL
-      const formattedCursor = parsedCursor.toISOString()
-      query += ` AND sent_at < $2`
-      values.push(formattedCursor)
-    } else {
-      console.log("Invalid cursor value detected")
-      return NextResponse.json({ error: "Invalid cursor value" }, { status: 400 })
-    }
+    query += ` AND sent_at < $2`
+    values.push(cursor)
   }
   query += ` ORDER BY sent_at DESC LIMIT $${values.length + 1};`
   values.push(parseInt(limit))
@@ -50,15 +41,19 @@ export async function GET(request: NextRequest) {
   try {
     const res = await client.query(query, values)
     const rows = res.rows as MessageChat[]
-    console.log("rowwwwwwwwwwwwwws", rows)
+    const messageChatWithSentByWho = rows.map((row) => {
+      const isSentByCurrentUser = row.sender_id === userId
+      return { ...row, isSentByCurrentUser }
+    })
+    console.log("MessageChatWithSentByWho0", messageChatWithSentByWho)
 
-    // If there are rows, get the cursor for the next page
-    const nextCursor = rows.length > 0 ? rows[rows.length - 1].sent_at.getTime() : null
-    const prevCursor = rows.length > 0 ? rows[0].sent_at.getTime() : null // For previous page
+    // Determine if there are more messages to fetch
+    const hasMoreMessages = rows.length === parseInt(limit)
 
+    // Determine the prevCursor value
+    const prevCursor = hasMoreMessages ? rows[rows.length - 1].sent_at : null
     return NextResponse.json({
-      messages: rows,
-      nextCursor,
+      messages: messageChatWithSentByWho,
       prevCursor,
     })
   } catch (error) {

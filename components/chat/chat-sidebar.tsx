@@ -36,6 +36,7 @@ import { expandChatAtom } from "@/jotai"
 import { useAtom } from "jotai"
 
 import { User } from "@/types"
+import { useRouter } from "next/navigation"
 interface ChatSideBarProps {
   chat_group_id: string
   receiver: User
@@ -45,6 +46,7 @@ export function ChatSideBar({ chat_group_id, receiver }: ChatSideBarProps) {
   const [isExpandChat, _] = useAtom(expandChatAtom)
   const [isOpen, setIsOpen] = useState(false)
   const [isMeidaFileOpen, setIsMeidaFileOpen] = useState(false)
+  const router = useRouter()
   const imageUrl = "/images/contact/anhkhuong.jpg"
   return (
     <>
@@ -56,18 +58,20 @@ export function ChatSideBar({ chat_group_id, receiver }: ChatSideBarProps) {
               <div className="flex flex-col">
                 <div className="flex justify-center pb-3 pt-4">
                   <Avatar className="h-[80px] w-[80px]">
-                    <AvatarImage src={imageUrl || ""} />
+                    <AvatarImage src={receiver.image || ""} />
                     <AvatarFallback className="bg-sky-500">
                       <UserIcon className="h-7 w-7 text-white" />
                     </AvatarFallback>
                   </Avatar>
                 </div>
                 <div className="flex justify-center px-3">
-                  <span className="text-primary-text">User name</span>
+                  <span className="text-primary-text"> {receiver.name}</span>
                 </div>
                 <div className="m-0 flex justify-center gap-x-5 px-3 pt-4">
                   <div className="flex flex-col items-center justify-center">
-                    <span className="bg-third-clr hover:bg-third-clr aspect-square cursor-pointer overflow-hidden rounded-full p-2">
+                    <span
+                      className="bg-third-clr hover:bg-third-clr aspect-square cursor-pointer overflow-hidden rounded-full p-2"
+                      onClick={() => router.push(`/${receiver.handle}`)}>
                       <UserIcon className="h-6 w-6 text-white" />
                     </span>
 

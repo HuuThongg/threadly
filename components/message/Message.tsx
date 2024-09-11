@@ -30,7 +30,7 @@ const Messages = () => {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery<ConversationsPage, Error>({
-    queryKey: ["messages"],
+    queryKey: ["chat_group_view"],
     queryFn: async ({ pageParam = 0 }) => {
       const res = await fetch(`/api/group_chat?cursor=${pageParam}`)
       if (!res.ok) {
@@ -39,16 +39,17 @@ const Messages = () => {
       return res.json()
     },
     getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
+    getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,
     initialPageParam: 0,
     retry: 1,
   })
   console.log("group chat", data)
-
-  React.useEffect(() => {
-    if (inView && hasNextPage) {
-      fetchNextPage()
-    }
-  }, [fetchNextPage, inView, hasNextPage])
+  //
+  //React.useEffect(() => {
+  //  if (inView && hasNextPage) {
+  //    fetchNextPage()
+  //  }
+  //}, [fetchNextPage, inView, hasNextPage])
 
   return (
     <div className="scrollbar-thumb-fifth-clr scrollbar-thumb-rounded-md scrollbar-w-3 flex max-h-[calc(100vh-90px-152px)] flex-col overflow-x-hidden overflow-y-scroll scrollbar scrollbar-track-transparent hover:scrollbar-track-[#2c2d2f]">
@@ -66,7 +67,7 @@ const Messages = () => {
                     className="group/item hover:bg-third-clr relative m-0 flex w-full flex-col rounded-lg p-2 group-hover/edit:bg-red-500"
                     onClick={() => {
                       if (isHasMessagePath) {
-                        router.push(`/messages/${group_chat.chat_group_id}`)
+                        router.replace(`/messages/${group_chat.chat_group_id}`)
                       } else {
                         //addMessageId(message);
                       }
