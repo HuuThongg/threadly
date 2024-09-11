@@ -88,13 +88,15 @@ const ChatTypeBox = ({ chat_group_id, receiver, sender_id }: ChatTypeBoxProps) =
           // Return other pages unchanged
           return page;
         });
-
+        // Update pageParams by reversing them to match reversed pages
+        const updatedPageParams = [...previousMessages.pageParams].reverse();
         // Set the updated data back into the query cache
         queryClient.setQueryData<GroupChatMessageReactQuery>(
           ["group_chat_messages", chat_group_id],
           {
             ...previousMessages,
             pages: updatedPages,
+            pageParams: updatedPageParams,
           }
         );
 
@@ -113,7 +115,7 @@ const ChatTypeBox = ({ chat_group_id, receiver, sender_id }: ChatTypeBoxProps) =
       )
     },
     onSettled: () => {
-      //queryClient.invalidateQueries({ queryKey: ["group_chat_messages", chat_group_id] })
+      queryClient.invalidateQueries({ queryKey: ["group_chat_messages", chat_group_id] })
       setText("")
       setIsTyping(false)
     },
