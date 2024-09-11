@@ -1,11 +1,7 @@
 "use client"
 import { useState } from "react"
 
-interface OnboardingProps {
-  userId: string
-}
-
-const OnboardingPage = ({ userId }: OnboardingProps) => {
+const OnboardingPage = () => {
   const [handle, setHandle] = useState("")
   const [bio, setBio] = useState("")
   const [profileImage, setProfileImage] = useState<File | null>(null)

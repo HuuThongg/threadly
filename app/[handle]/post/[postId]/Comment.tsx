@@ -1,16 +1,6 @@
 "use client"
 import React, { useState } from "react"
-type CommentNode = {
-  comment_id: string
-  post_id: string
-  user_id: string
-  user_handle: string
-  content: string
-  parent_comment_id?: string
-  created_at: string
-  images: { image_url: string; blurHash: string }[]
-  replies: CommentNode[] // For nested replies
-}
+import { CommentNode } from "./page"
 type CommentProps = {
   comment: CommentNode
 }

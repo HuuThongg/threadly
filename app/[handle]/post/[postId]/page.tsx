@@ -6,16 +6,10 @@ import { getCommentsByPostId, getPostById } from "@/db/query"
 import { ChevronDown } from "lucide-react"
 import Comment from "./Comment"
 import { TypeComment } from "./typeComment"
-type CommentNode = {
-  comment_id: string
-  post_id: string
-  user_id: string
-  user_handle: string
-  content: string
-  parent_comment_id?: string
-  created_at: string
-  images: { image_url: string; blurHash: string }[]
-  replies: CommentNode[] // For nested replies
+import { PostCommentsView } from "@/types"
+
+export interface CommentNode extends PostCommentsView {
+  replies: CommentNode[]
 }
 export default async function HomePage({
   params,
@@ -57,12 +51,12 @@ export default async function HomePage({
 async function fetchComments(postId: string): Promise<CommentNode[]> {
   const comments = await getCommentsByPostId(postId)
   // Function to build nested comments
-  const buildTree = (comments: CommentNode[]): CommentNode[] => {
+  const buildTree = (comments: PostCommentsView[]): CommentNode[] => {
     const map = new Map<string, CommentNode>()
 
     comments.forEach((comment) => {
-      comment.replies = [] // Initialize replies array
-      map.set(comment.comment_id, comment)
+      const commentNode: CommentNode = { ...comment, replies: [] }
+      map.set(comment.comment_id, commentNode)
     })
 
     const result: CommentNode[] = []
@@ -71,13 +65,12 @@ async function fetchComments(postId: string): Promise<CommentNode[]> {
       if (comment.parent_comment_id) {
         const parent = map.get(comment.parent_comment_id)
         if (parent) {
-          parent.replies.push(comment)
+          parent.replies!.push(map.get(comment.comment_id)!)
         }
       } else {
-        result.push(comment)
+        result.push(map.get(comment.comment_id)!)
       }
     })
-    console.log("result", result)
 
     return result
   }

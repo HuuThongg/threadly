@@ -31,10 +31,19 @@ const ChatTypeBox = ({ chat_group_id, receiver, sender_id }: ChatTypeBoxProps) =
     setIsTyping(inputValue.length > 0)
     setText(inputValue)
   }
-  const sendMessageHandler = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+  const sendMessageHandler = async (
+    e: React.KeyboardEvent<HTMLTextAreaElement> | React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    if (
+      e.type === "keydown" &&
+      (e as React.KeyboardEvent<HTMLTextAreaElement>).key === "Enter" &&
+      !(e as React.KeyboardEvent<HTMLTextAreaElement>).shiftKey
+    ) {
       e.preventDefault()
-      console.log("hellllllllllllllllllllo")
+      sendMessageMutaion.mutate()
+    }
+    // Check if the event is a mouse event for the button click
+    else if (e.type === "click") {
       sendMessageMutaion.mutate()
     }
   }
@@ -54,16 +63,16 @@ const ChatTypeBox = ({ chat_group_id, receiver, sender_id }: ChatTypeBoxProps) =
       const previousMessages = queryClient.getQueryData<GroupChatMessageReactQuery>([
         "group_chat_messages",
         chat_group_id,
-      ]);
+      ])
 
       try {
         // Ensure we have previous messages to work with
         if (!previousMessages) {
-          throw new Error("No previous messages found in query cache.");
+          throw new Error("No previous messages found in query cache.")
         }
 
         // Get the last page index
-        const lastPageIndex = previousMessages.pages.length - 1;
+        const lastPageIndex = previousMessages.pages.length - 1
 
         // Construct the new message
         const newMessage: MessageType = {
@@ -74,7 +83,7 @@ const ChatTypeBox = ({ chat_group_id, receiver, sender_id }: ChatTypeBoxProps) =
           message: text,
           isSentByCurrentUser: true,
           sent_at: new Date(),
-        };
+        }
 
         // Append the new message to the last page's messages
         const updatedPages = previousMessages.pages.map((page, index) => {
@@ -83,13 +92,13 @@ const ChatTypeBox = ({ chat_group_id, receiver, sender_id }: ChatTypeBoxProps) =
             return {
               ...page,
               messages: [...page.messages, newMessage],
-            };
+            }
           }
           // Return other pages unchanged
-          return page;
-        });
+          return page
+        })
         // Update pageParams by reversing them to match reversed pages
-        const updatedPageParams = [...previousMessages.pageParams].reverse();
+        const updatedPageParams = [...previousMessages.pageParams].reverse()
         // Set the updated data back into the query cache
         queryClient.setQueryData<GroupChatMessageReactQuery>(
           ["group_chat_messages", chat_group_id],
@@ -97,14 +106,17 @@ const ChatTypeBox = ({ chat_group_id, receiver, sender_id }: ChatTypeBoxProps) =
             ...previousMessages,
             pages: updatedPages,
             pageParams: updatedPageParams,
-          }
-        );
+          },
+        )
 
         // Log the updated data for verification
-        const updatedData = queryClient.getQueryData(["group_chat_messages", chat_group_id]);
-        console.log("Done updating cache:", updatedData);
+        const updatedData = queryClient.getQueryData([
+          "group_chat_messages",
+          chat_group_id,
+        ])
+        console.log("Done updating cache:", updatedData)
       } catch (error) {
-        console.error("Error updating cache:", error);
+        console.error("Error updating cache:", error)
       }
       return { previousMessages }
     },
