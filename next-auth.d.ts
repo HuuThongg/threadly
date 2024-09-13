@@ -6,3 +6,8 @@ export type ExtendedUser = DefaultSession["user"] & {
   gender: string | null
   onboarding_complete: boolean
 }
+declare module "next-auth" {
+  interface Session {
+    user: ExtendedUser
+  }
+}

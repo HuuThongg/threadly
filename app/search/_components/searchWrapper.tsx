@@ -1,6 +1,6 @@
 "use client"
 
-import { Search } from "lucide-react"
+import { Loader, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { useDebounce } from "@uidotdev/usehooks"
@@ -24,6 +24,7 @@ export function SearchWrapper() {
     data: usersList,
     error,
     isFetching,
+    isLoading,
   } = useQuery<UserWithFollowStatus[]>({
     queryKey: ["user-follow-search", debouncedSearchTerm],
     queryFn: () => fetchUsers(debouncedSearchTerm),
@@ -52,6 +53,11 @@ export function SearchWrapper() {
       </div>
       {usersList && (
         <UserSearchList debouncedSearchTerm={debouncedSearchTerm} usersList={usersList} />
+      )}
+      {(isLoading || isFetching) && (
+        <div className="flex w-full justify-center">
+          <Loader className="animate-spin text-secondary" />
+        </div>
       )}
     </main>
   )

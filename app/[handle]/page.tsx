@@ -2,7 +2,6 @@ import { auth } from "@/auth"
 import { EditProfile } from "@/components/edit-profile"
 import { ProfileTabs } from "@/components/profile-tabs"
 import { getFollowers, getUserByHandle } from "@/db/query"
-import { cn } from "@/lib/utils"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 

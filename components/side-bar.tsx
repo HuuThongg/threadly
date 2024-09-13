@@ -28,6 +28,8 @@ interface SidebarItem {
 
 const Sidebar = () => {
   const pathname = usePathname()
+
+  const session = useSession()
   const sidebarConstanst: SidebarItem[] = [
     {
       nameIcon: House,
@@ -47,23 +49,14 @@ const Sidebar = () => {
     },
     {
       nameIcon: User,
-      link: "/user",
+      link: `/${session.data?.user?.handle}`,
     },
   ]
-  const session = useSession()
   return (
     <div className="fixed top-0 flex h-screen w-[4.75rem] flex-col justify-between bg-background px-2 text-white">
       <div className="flex flex-col items-center py-4">
-        <div className="mb-8">
+        <div className="mb-8 cursor-pointer rounded-md p-2">
           <p className="font-serif font-extrabold italic">R&R</p>
-          <div>
-            {" "}
-            {session.status === "authenticated" ? (
-              <button onClick={() => signOut()}>Log out</button>
-            ) : (
-              <button onClick={() => signIn("github")}> Sign In</button>
-            )}
-          </div>
         </div>
       </div>
 

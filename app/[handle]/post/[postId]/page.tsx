@@ -1,16 +1,10 @@
-import { auth } from "@/auth"
-import Posts from "@/components/post"
 import { Post } from "@/components/post/Post"
-import { StartThread } from "@/components/start-thread"
 import { getCommentsByPostId, getPostById } from "@/db/query"
 import { ChevronDown } from "lucide-react"
-import Comment from "./Comment"
-import { TypeComment } from "./typeComment"
-import { PostCommentsView } from "@/types"
+import { CommentNode, PostCommentsView } from "@/types"
+import TypeComment from "@/components/comment/type-comment"
+import Comment from "@/components/comment/comment"
 
-export interface CommentNode extends PostCommentsView {
-  replies: CommentNode[]
-}
 export default async function HomePage({
   params,
 }: {
@@ -18,8 +12,6 @@ export default async function HomePage({
 }) {
   const postInfo = await getPostById(params.postId)
   const comments = await fetchComments(params.postId)
-  console.log("handler", params.handle)
-  console.log("postId", params.postId)
 
   return (
     <div className="flex min-h-screen flex-1 flex-col items-center justify-between px-5">
@@ -41,7 +33,7 @@ export default async function HomePage({
               <Comment key={comment.comment_id} comment={comment} />
             ))}
           </div>
-          <TypeComment />
+          <TypeComment post_id={postInfo.post_id} />
         </div>
       </div>
     </div>

@@ -26,7 +26,7 @@ export function PostInteraction({ postInfo }: { postInfo: UserPostView }) {
             <Button
               variant="outline"
               size="sm"
-              className="scale-100 rounded-2xl border-0 border-none px-3 text-ring transition duration-200 hover:bg-neutral-800 active:scale-[0.87]"
+              className="scale-100 rounded-2xl border-0 border-none bg-transparent px-3 text-ring transition duration-200 hover:bg-neutral-900 active:scale-[0.87]"
               onClick={handleLikeClick}>
               <Heart className="text-ring" size={20} strokeWidth={1} />
               {postInfo.like_count === 0 ? null : (
@@ -47,7 +47,7 @@ export function PostInteraction({ postInfo }: { postInfo: UserPostView }) {
                     event.preventDefault()
                     setOpen(true)
                   }}
-                  className="scale-100 rounded-2xl border-0 border-none px-3 text-ring transition duration-200 hover:bg-neutral-800 active:scale-[0.87]">
+                  className="scale-100 rounded-2xl border-0 border-none bg-transparent px-3 text-ring transition duration-200 hover:bg-neutral-900 active:scale-[0.87]">
                   <MessageCircle className="text-ring" size={20} strokeWidth={1} />
                   {postInfo.comment_count === 0 ? null : (
                     <span className="ml-1 select-none text-[13px] font-normal leading-3 text-ring">
@@ -63,7 +63,7 @@ export function PostInteraction({ postInfo }: { postInfo: UserPostView }) {
             <Button
               variant="outline"
               size="sm"
-              className="scale-100 rounded-2xl border-0 border-none px-3 text-ring transition duration-200 hover:bg-neutral-800 active:scale-[0.87]">
+              className="scale-100 rounded-2xl border-0 border-none bg-transparent px-3 text-ring transition duration-200 hover:bg-neutral-900 active:scale-[0.87]">
               <Repeat2 className="text-ring" size={20} strokeWidth={1} />
               {postInfo.repost_count === 0 ? null : (
                 <span className="ml-1 select-none text-[13px] font-normal leading-3 text-ring">

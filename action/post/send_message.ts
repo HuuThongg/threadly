@@ -1,7 +1,6 @@
 "use server"
 import { auth } from "@/auth"
 import { pool } from "@/db"
-import { revalidatePath } from "next/cache"
 import * as z from "zod"
 
 // Define the schema for validating the input
@@ -21,7 +20,6 @@ export default async function SendMessage({
   message,
 }: SendMessageProps) {
   const client = await pool.connect()
-  console.log("sending .................. ")
 
   try {
     const parsed = sendMessageSchema.safeParse({
@@ -29,17 +27,11 @@ export default async function SendMessage({
       receiver_id,
       message,
     })
-    console.log("parsing...................")
-    console.log("chat_group_id", chat_group_id)
-    console.log("receiver_id", receiver_id)
-    console.log("message", message)
     if (!parsed.success) {
-      console.log("parsed is not success")
       return {
         message: parsed.error.flatten().fieldErrors,
       }
     }
-    console.log("parsed success")
     const session = await auth()
     const userId = session?.user?.id
     if (!session || !userId) {

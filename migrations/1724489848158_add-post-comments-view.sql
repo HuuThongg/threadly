@@ -4,9 +4,10 @@
 CREATE OR REPLACE VIEW post_comments_view AS
 SELECT 
     c.id AS comment_id,
-    c.post_id AS post_id,
-    c.user_id AS user_id,
+    c."post_id" AS post_id,
+    c."user_id" AS user_id,
     u.handle AS user_handle,
+    u.image as user_image,
     c.content,
     c."parent_comment_id",
     c.created_at,
@@ -23,7 +24,7 @@ JOIN
 LEFT JOIN 
     comment_images ci ON c.id = ci.comment_id
 GROUP BY 
-    c.id, u.handle; 
+    c.id, u.handle, u.image; 
 
 
 

@@ -3,6 +3,8 @@ import { Separator } from "@/components/ui/separator"
 import Image from "next/image"
 import { FollowStatusButton } from "./followStatusButton"
 import { UserWithFollowStatus } from "@/types"
+import { AvatarFallback, Avatar, AvatarImage } from "@/components/ui/avatar"
+import { UserIcon } from "lucide-react"
 
 type UserSearchListProps = {
   usersList: UserWithFollowStatus[]
@@ -19,13 +21,12 @@ export function UserSearchList({ usersList, debouncedSearchTerm }: UserSearchLis
             key={userWithFollowStatus.id}>
             <div className="flex w-full flex-row py-3">
               <div className="mt-1 size-9 scale-100 cursor-pointer select-none overflow-hidden rounded-full border-border">
-                <Image
-                  className="aspect-square w-full rounded-full object-cover"
-                  src={userWithFollowStatus.image || "defaultAvatar.png"}
-                  alt="User avatar"
-                  width={36}
-                  height={36}
-                />
+                <Avatar className="h-[36px] w-[36px]">
+                  <AvatarImage src={userWithFollowStatus.image || ""} />
+                  <AvatarFallback className="bg-sky-500">
+                    <UserIcon className="h-7 w-7 text-white" />
+                  </AvatarFallback>
+                </Avatar>
               </div>
 
               <div className="ml-3 flex flex-1 flex-row justify-between">
@@ -34,8 +35,7 @@ export function UserSearchList({ usersList, debouncedSearchTerm }: UserSearchLis
                   <p className="text-nonative">
                     {userWithFollowStatus.handle || "userhandle"}
                   </p>
-                  <p className="pt-1 text-primary">418K followers</p>
-                  <p>ID: {userWithFollowStatus.id}</p>
+                  {/*<p className="pt-1 text-primary">418K followers</p>*/}
                 </div>
                 <div className="flex items-center">
                   <FollowStatusButton

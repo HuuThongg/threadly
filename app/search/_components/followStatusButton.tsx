@@ -63,7 +63,6 @@ export function FollowStatusButton({
       await unfollowUser(user_id)
     },
     onMutate: async (user_id: string) => {
-      //await queryClient.cancelQueries(['searchUsers', debouncedSearchTerm]);
 
       await queryClient.cancelQueries({
         queryKey: ["user-follow-search", debouncedSearchTerm],

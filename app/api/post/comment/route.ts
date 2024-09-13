@@ -9,13 +9,12 @@ import { createComment, createPost } from "@/db/query"
 
 export async function POST(request: NextRequest) {
   const session = await auth()
-  console.log("session in imageUpload", session)
   if (!session) {
     return NextResponse.json({ error: "User is not authenticated" }, { status: 401 })
   }
 
-  const userId = session.user?.id
-  if (!userId) {
+  const user_id = session.user?.id
+  if (!user_id) {
     return NextResponse.json({ error: "User is not authenticated" }, { status: 401 })
   }
 
@@ -48,7 +47,6 @@ export async function POST(request: NextRequest) {
       Body: resizedImageBuffer,
       ContentType: "image/jpeg",
     })
-    console.log("hewllo ren cho dien")
     const uploadResponse = await s3Client.send(uploadCommand)
     if (!uploadResponse) {
       return NextResponse.json({ error: "Failed to upload image" }, { status: 500 })
@@ -65,19 +63,20 @@ export async function POST(request: NextRequest) {
 
   // Handle content
   const content = (formData.get("content") as string) || null || undefined
-  const postId = formData.get("postId") as string
-  const parentCommentId = (formData.get("parentCommentId") as string) || null || undefined
-  console.log("postId", postId)
+  const post_id = formData.get("post_id") as string
+  const parent_comment_id =
+    (formData.get("parent_comment_id") as string) || null || undefined
+  console.log("postId", post_id)
   console.log("content,", content)
-  console.log("parentCommentId", parentCommentId)
+  console.log("parentCommentId", parent_comment_id)
   // Create the post
   await createComment({
-    userId,
-    postId,
-    parentCommentId,
+    user_id,
+    post_id,
+    parent_comment_id,
     content,
     images: imagesUrls,
-    blurHashes,
+    blur_hashes: blurHashes,
   })
 
   return NextResponse.json({ success: true }, { status: 201 })

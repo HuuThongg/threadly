@@ -1,4 +1,3 @@
-import { getPosts } from "@/db/query"
 import { Post } from "./Post"
 import Link from "next/link"
 import { UserPostView } from "@/types"

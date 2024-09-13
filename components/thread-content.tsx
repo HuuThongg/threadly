@@ -21,7 +21,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormField, FormItem } from "./ui/form"
 import { SelectedFile } from "@/schema"
 
-//const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 export const postFormSchema = z.object({
   content: z.string().optional(),
   //images: z.instanceof(FileList).optional(),
@@ -201,7 +200,7 @@ export function ThreadContent() {
                             />
                             <ImageUp className="h-6 w-6 stroke-nonative stroke-2 group-active/add:stroke-nonative/50" />
                             <span className="ml-1 font-normal group-active/add:text-nonative/50">
-                              Add
+                              Add images
                             </span>
                           </div>
                         </div>

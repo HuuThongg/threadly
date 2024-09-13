@@ -1,4 +1,5 @@
 import {
+  CreateCommentParams,
   PartialUser,
   PostCommentsView,
   User,
@@ -25,6 +26,26 @@ export async function getFolloweredUserPosts(userId: string): Promise<UserPostVi
   } catch (error) {
     console.error("Error executing query", error)
     throw new Error("Failed to fetch posts from the database")
+  } finally {
+    client.release()
+  }
+}
+
+export async function getPostByUserId(user_id: string) {
+  const query = `
+    SELECT  *  FROM user_posts_view
+    WHERE user_id = $1;
+  `
+
+  const values = [user_id]
+
+  const client = await pool.connect()
+  try {
+    const res = await client.query(query, values)
+    return res.rows
+  } catch (error) {
+    console.error("Error executing query", error)
+    throw new Error("Failed to fetch posts for userID from the database")
   } finally {
     client.release()
   }
@@ -115,7 +136,7 @@ export async function getLikesByPostId(postId: string): Promise<PartialUser[]> {
     SELECT u.id, u.handle, u.name, u.image
     FROM likes l
     JOIN users u ON l.user_id= u.id
-    WHERE l."postId" = $1;
+    WHERE l."post_id" = $1;
   `
   const values = [postId]
 
@@ -130,7 +151,7 @@ export async function getLikesByPostId(postId: string): Promise<PartialUser[]> {
 
 export async function getUserProfileById(userId: string): Promise<PartialUser> {
   const query = `
-    SELECT id, handle, name, email, image
+    SELECT id, handle, name, email, image, onboarding_complete
     FROM users
     WHERE id = $1;
   `
@@ -329,22 +350,13 @@ export async function createPost({
   }
 }
 
-interface CreateCommentParams {
-  userId: string // ID of the user creating the comment
-  postId: string // ID of the post the comment is related to
-  content?: string // Content of the comment
-  parentCommentId?: string // Optional ID of the parent comment for nested comments
-  images?: string[]
-  blurHashes?: string[]
-}
-
 export async function createComment({
-  userId,
-  postId,
+  user_id,
+  post_id,
   content,
-  parentCommentId,
+  parent_comment_id,
   images,
-  blurHashes,
+  blur_hashes,
 }: CreateCommentParams): Promise<string> {
   const client = await pool.connect()
 
@@ -358,10 +370,10 @@ export async function createComment({
       VALUES ($1, $2, $3, $4, NOW(), NOW())
       RETURNING id;
     `
-    const commentValues = [postId, userId, content, parentCommentId || null]
+    const commentValues = [post_id, user_id, content, parent_comment_id || null]
     const commentResult = await client.query(commentInsertQuery, commentValues)
     const commentId = commentResult.rows[0].id
-    if (images && images.length > 0 && blurHashes && blurHashes.length > 0) {
+    if (images && images.length > 0 && blur_hashes && blur_hashes.length > 0) {
       const imageInsertQuery = `
     INSERT INTO comment_images (comment_id, image_url,blur_hash)
     VALUES ${images.map((_, index) => `($1, $${index * 2 + 2}, $${index * 2 + 3})`).join(", ")}
@@ -369,7 +381,7 @@ export async function createComment({
       const imageValues = [commentId]
 
       images.forEach((imageUrl, index) => {
-        imageValues.push(imageUrl, blurHashes[index])
+        imageValues.push(imageUrl, blur_hashes[index])
       })
 
       await client.query(imageInsertQuery, imageValues)

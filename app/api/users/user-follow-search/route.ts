@@ -4,7 +4,6 @@ import { getUsersWithFollowStatus } from "@/db/query"
 import { NextRequest, NextResponse } from "next/server"
 export async function GET(request: NextRequest) {
   const session = await auth()
-  console.log("session in imageUpload", session)
   if (!session) {
     return NextResponse.json({ error: "User is not authenticated" }, { status: 401 })
   }

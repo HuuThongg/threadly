@@ -39,7 +39,10 @@ export type Like = {
   comment_id: string | null
 }
 
-export type PartialUser = Pick<User, "id" | "handle" | "name" | "image">
+export type PartialUser = Pick<
+  User,
+  "id" | "handle" | "name" | "image" | "onboarding_complete"
+>
 
 export type Repost = {
   id: string // Assuming UUID
@@ -78,6 +81,10 @@ export interface PostCommentsView {
   parent_comment_id: string | null
   created_at: Date
   images: PostImage[]
+  like_count: number
+  repost_count: number
+  comment_count: number
+  user_image: string
 }
 
 export interface InteractionCount {
@@ -108,4 +115,16 @@ export type MessageChat = {
   group_id: string
   message: string
   sent_at: Date
+}
+
+export interface CreateCommentParams {
+  user_id: string // ID of the user creating the comment
+  post_id: string // ID of the post the comment is related to
+  content?: string // Content of the comment
+  parent_comment_id?: string | null // Optional ID of the parent comment for nested comments
+  images?: string[]
+  blur_hashes?: string[]
+}
+export interface CommentNode extends PostCommentsView {
+  replies: CommentNode[]
 }
