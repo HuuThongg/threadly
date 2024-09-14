@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { PutObjectCommand } from "@aws-sdk/client-s3"
 import { s3Client } from "@/aws"
 import { createPost } from "@/db/query"
-import { ablyClient } from "@/lib/ably"
+import * as Ably from "ably"
 
 export async function POST(request: NextRequest) {
   const session = await auth()
@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "User is not authenticated" }, { status: 401 })
   }
 
+  const ablyClient = new Ably.Realtime(process.env.ABLY_API_KEY!)
   const formData = await request.formData()
   const files = formData.getAll("images") as File[]
 
