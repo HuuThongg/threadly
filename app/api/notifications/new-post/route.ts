@@ -1,4 +1,3 @@
-import { ablyClient } from "@/lib/ably"
 
 import * as Ably from "ably"
 import { NextRequest, NextResponse } from "next/server"
