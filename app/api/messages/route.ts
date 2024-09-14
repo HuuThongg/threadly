@@ -36,8 +36,6 @@ export async function GET(request: NextRequest) {
   values.push(parseInt(limit))
   const client = await pool.connect()
 
-  console.log("values :", values)
-  console.log("query :", query)
   try {
     const res = await client.query(query, values)
     const rows = res.rows as MessageChat[]
@@ -47,7 +45,6 @@ export async function GET(request: NextRequest) {
         return { ...row, isSentByCurrentUser }
       })
       .reverse()
-    console.log("MessageChatWithSentByWho0", messageChatWithSentByWho)
 
     // Determine if there are more messages to fetch
     const hasMoreMessages = rows.length === parseInt(limit)

@@ -7,6 +7,14 @@ import { UserPostView } from "@/types"
 
 import { formatDate } from "@/lib/utils"
 import { RenderImages } from "../RenderImages"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
+import { PostUtils } from "./postUtils"
 export function Post({ postInfo }: { postInfo: UserPostView }) {
   const formattedDate = formatDate(postInfo.created_at)
   return (
@@ -31,12 +39,7 @@ export function Post({ postInfo }: { postInfo: UserPostView }) {
                 {formattedDate}
               </span>
             </div>
-            <Button
-              variant="outline"
-              size="icon"
-              className="self-center rounded-full border-0 border-none text-nonative">
-              <Ellipsis size={16} />
-            </Button>
+            <PostUtils />
           </div>
         </div>
         <div className="col-start-2 row-span-full row-start-2 pt-2">

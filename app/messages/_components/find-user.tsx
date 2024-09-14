@@ -15,7 +15,7 @@ const fetchUsers = async (searchTerm: string) => {
   return response.json()
 }
 
-export default function DirectPage() {
+export function FindUser() {
   const [searchTerm, setSearchTerm] = React.useState("")
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
   const [selectedUser, setSelectedUser] = React.useState<PartialUser | null>(null) // State to track the selected user
@@ -70,49 +70,47 @@ export default function DirectPage() {
   }
 
   return (
-    <div className="relative z-0 flex max-h-[calc(100vh-58px)] min-w-0 max-w-full shrink grow basis-0 flex-col">
-      <div className="flex w-full flex-col space-x-3 p-3">
-        <ScrollArea className="border-wash h-[400px] w-[350px] rounded-md border drop-shadow-2xl">
-          <div className="text-primary">To:{selectedUser ? selectedUser.name : null}</div>
-          <div>userid: {selectedUser?.id}</div>
-          <input type="search" value={searchTerm} onChange={handleChange} />
+    <div className="flex w-full flex-col">
+      <ScrollArea className="border-wash w-[350px] rounded-md border drop-shadow-2xl">
+        <div className="text-primary">To:{selectedUser ? selectedUser.name : null}</div>
+        <div>userid: {selectedUser?.id}</div>
+        <input type="search" value={searchTerm} onChange={handleChange} />
 
-          {isLoading ? (
-            <div>Loading...</div>
-          ) : (
-            users &&
-            users.map((user: PartialUser) => (
-              <div
-                key={user.id}
-                className={`text-primary-text flex cursor-pointer ${selectedUser?.id === user.id ? "bg-gray-200" : ""}`} // Highlight selected user
-                onClick={() => handleUserClick(user)} // Set selected user on click
-              >
-                <div className="flex shrink-0 select-none flex-col p-[6px]">
-                  <div className="flex h-[36px] w-[36px] items-center justify-center overflow-hidden rounded-full">
-                    <Image
-                      src={user.image || "/defaultAvatar.jpg"}
-                      alt="avatar"
-                      width={40}
-                      height={40}
-                    />
-                  </div>
-                </div>
-                <div className="flex min-w-0 max-w-full shrink grow basis-0 flex-col p-[6px]">
-                  <div className="my-[5px] text-primary">
-                    <span>{user.name}</span>
-                  </div>
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : (
+          users &&
+          users.map((user: PartialUser) => (
+            <div
+              key={user.id}
+              className={`text-primary-text flex cursor-pointer ${selectedUser?.id === user.id ? "bg-gray-200" : ""}`} // Highlight selected user
+              onClick={() => handleUserClick(user)} // Set selected user on click
+            >
+              <div className="flex shrink-0 select-none flex-col p-[6px]">
+                <div className="flex h-[36px] w-[36px] items-center justify-center overflow-hidden rounded-full">
+                  <Image
+                    src={user.image || "/defaultAvatar.jpg"}
+                    alt="avatar"
+                    width={40}
+                    height={40}
+                  />
                 </div>
               </div>
-            ))
-          )}
-        </ScrollArea>
-        <button
-          onClick={handleChatClick}
-          className={`rounded bg-blue-500 px-4 py-2 text-white ${!selectedUser ? "cursor-not-allowed opacity-50" : ""}`} // Disable button if no user selected
-          disabled={!selectedUser}>
-          Chat
-        </button>
-      </div>
+              <div className="flex min-w-0 max-w-full shrink grow basis-0 flex-col p-[6px]">
+                <div className="my-[5px] text-primary">
+                  <span>{user.name}</span>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </ScrollArea>
+      <button
+        onClick={handleChatClick}
+        className={`rounded bg-blue-500 px-4 py-2 text-white ${!selectedUser ? "cursor-not-allowed opacity-50" : ""}`} // Disable button if no user selected
+        disabled={!selectedUser}>
+        Chat
+      </button>
     </div>
   )
 }

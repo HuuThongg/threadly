@@ -1,10 +1,12 @@
 "use client"
 import React from "react"
-import ChatMessages from "./chat-message"
-import ChatTypeBox from "./chat-typebox"
 import { User } from "@/types"
 import { ChatHeader } from "./chat-header"
-
+import dynamic from "next/dynamic"
+const ChatTypeBox = dynamic(() => import("./chat-typebox"), {
+  ssr: false,
+})
+const ChatMessages = dynamic(() => import("./chat-message"), { ssr: false })
 export interface Message {
   id: number
   name: string

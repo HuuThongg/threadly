@@ -30,6 +30,20 @@ export async function getFolloweredUserPosts(userId: string): Promise<UserPostVi
     client.release()
   }
 }
+export async function updateHandle(user_id: string, handle: string): Promise<void> {
+  const query = `
+ UPDATE users 
+  SET handle = $2 
+WHERE id = $1
+`
+  const values = [user_id, handle]
+  try {
+    await pool.query(query, values)
+  } catch (error) {
+    console.error("Error -: Failed to update handle", error)
+    throw new Error("Failed to update handle")
+  }
+}
 
 export async function getPostByUserId(user_id: string) {
   const query = `

@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { PutObjectCommand } from "@aws-sdk/client-s3"
 import { s3Client } from "@/aws"
 import { createPost } from "@/db/query"
+import { ablyClient } from "@/lib/ably"
 
 export async function POST(request: NextRequest) {
   const session = await auth()
@@ -71,6 +72,8 @@ export async function POST(request: NextRequest) {
 
   // Create the post
   await createPost({ userId, content, images: imagesUrls, blurHashes })
+  const channel = ablyClient.channels.get("notifications")
+  await channel.publish("new_post", "here is my new _post")
 
   return NextResponse.json({ success: true }, { status: 201 })
 }

@@ -5,6 +5,7 @@ import { MessageChat, User } from "@/types"
 import { EllipsisVerticalIcon, Laugh, ReplyIcon } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { cn } from "@/lib/utils"
+import { useAblyClient } from "@/hoos/useAblyClientRealTime"
 
 const fetchMessages = async (chat_group_id: string, pageParam: string | null = null) => {
   console.log("fetchMessages in chat-message.tsx", pageParam)
@@ -31,12 +32,14 @@ export interface GroupChatMessageProps {
 }
 const ChatMessages = ({ chat_group_id, receiver }: ChatProps) => {
   const messageBoxRef = useRef<HTMLDivElement>(null)
+  const ablyClient = useAblyClient()
   const {
     data,
     error,
     fetchPreviousPage,
     isFetchingPreviousPage,
     isLoading,
+    refetch,
     hasPreviousPage,
   } = useInfiniteQuery<GroupChatMessageProps, Error>({
     queryKey: ["group_chat_messages", chat_group_id],
@@ -86,6 +89,17 @@ const ChatMessages = ({ chat_group_id, receiver }: ChatProps) => {
       container.removeEventListener("scroll", handleScroll)
     }
   }, [hasPreviousPage, isFetchingPreviousPage, fetchPreviousPage])
+
+  React.useEffect(() => {
+    const channel = ablyClient.channels.get("chat")
+    console.log("helkllllllllllllllllllllo")
+    channel.subscribe(`message:${chat_group_id}`, (msg) => {
+      refetch()
+    })
+    return () => {
+      channel.unsubscribe(`message:${chat_group_id}`)
+    }
+  }, [refetch])
 
   return (
     <div className="relative flex max-h-full flex-1 flex-col overflow-hidden">

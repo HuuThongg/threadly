@@ -2,19 +2,29 @@ import NextAuth from "next-auth"
 import PostgresAdapter from "@auth/pg-adapter"
 import { pool } from "@/db"
 import authConfig from "@/auth.config"
-import { getUserProfileById } from "./db/query"
+import { getUserProfileById, updateHandle } from "./db/query"
+import {
+  uniqueNamesGenerator,
+  Config,
+  adjectives,
+  colors,
+  animals,
+  names,
+} from "unique-names-generator"
 
+const config: Config = {
+  dictionaries: [adjectives, names],
+}
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PostgresAdapter(pool),
   callbacks: {
     async signIn({ user, account }) {
-      console.log('user', user)
-      console.log('account', account)
+      console.log("user", user)
+      console.log("account", account)
       if (account?.provider !== "credentials") return true
       return false
     },
     async session({ user, session, token, trigger }) {
-      console.log("00000000000000000", session)
       if (token.sub) {
         session.user.id = token.sub
       }
@@ -33,11 +43,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     error: "/auth/error",
   },
 
-  //events: {
-  //  async linkAccount({ user }) {
-  //
-  //  }
-  //},
+  events: {
+    async linkAccount({ user }) {
+      if (user.id) {
+        const handle = uniqueNamesGenerator(config)
+        updateHandle(user.id, handle)
+      }
+    },
+  },
   debug: process.env.NODE_ENV !== "production" ? true : false,
   session: { strategy: "jwt" },
   trustHost: true,

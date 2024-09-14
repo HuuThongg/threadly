@@ -22,6 +22,22 @@ export async function POST(request: NextRequest) {
   const client = await pool.connect()
   try {
     await client.query("BEGIN")
+
+    // Check if a chat group already exists between the current user and the other user
+    const existingGroup = await client.query(
+      `SELECT chat_groups.id FROM chat_groups
+       JOIN group_members AS gm1 ON chat_groups.id = gm1.group_id
+       JOIN group_members AS gm2 ON chat_groups.id = gm2.group_id
+       WHERE gm1.user_id = $1 AND gm2.user_id = $2`,
+      [userId, otherUserId],
+    )
+
+    if (existingGroup.rows.length > 0) {
+      // Group already exists, return the existing group ID
+      const existingGroupId = existingGroup.rows[0].id
+      await client.query("COMMIT")
+      return NextResponse.json({ groupChatId: existingGroupId })
+    }
     // // Create the chat group entry
     const groupChat = await client.query(
       `INSERT INTO chat_groups (name) VALUES ($1)  RETURNING id`,

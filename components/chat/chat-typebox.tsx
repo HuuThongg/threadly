@@ -8,6 +8,8 @@ import { PhoneIcon, PlusCircleIcon, SendHorizonalIcon } from "lucide-react"
 import SendMessage from "@/action/post/send_message"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { GroupChatMessageProps, MessageType } from "./chat-message"
+import { useSession } from "next-auth/react"
+import { useAblyClient } from "@/hoos/useAblyClientRealTime"
 
 interface ChatTypeBoxProps {
   chat_group_id: string
@@ -26,6 +28,8 @@ const ChatTypeBox = ({ chat_group_id, receiver, sender_id }: ChatTypeBoxProps) =
   const [text, setText] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const queryClient = useQueryClient()
+  const session = useSession()
+  const ablyClient = useAblyClient()
   const onChangeInputText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const inputValue = e.target.value
     setIsTyping(inputValue.length > 0)
@@ -55,77 +59,86 @@ const ChatTypeBox = ({ chat_group_id, receiver, sender_id }: ChatTypeBoxProps) =
         receiver_id: receiver.id,
         message: text,
       })
+      const channel = ablyClient.channels.get("chat")
+      console.log("sendMessageMutaion, about to publish")
+      channel.publish(`message:${chat_group_id}`, "new Message")
+
+      channel.publish(`1:new_message`, "new_message!!!")
+      //if (session.data?.user.id) {
+      //
+      //  channel.publish(`${session.data?.user.id}:new_message`, 'new_message')
+      //}
     },
-    onMutate: async () => {
-      await queryClient.cancelQueries({
-        queryKey: ["group_chat_messages", chat_group_id],
-      })
-      const previousMessages = queryClient.getQueryData<GroupChatMessageReactQuery>([
-        "group_chat_messages",
-        chat_group_id,
-      ])
-
-      try {
-        // Ensure we have previous messages to work with
-        if (!previousMessages) {
-          throw new Error("No previous messages found in query cache.")
-        }
-
-        // Get the last page index
-        const lastPageIndex = previousMessages.pages.length - 1
-
-        // Construct the new message
-        const newMessage: MessageType = {
-          group_id: chat_group_id,
-          id: uuidv4().toString(),
-          sender_id,
-          receiver_id: receiver.id,
-          message: text,
-          isSentByCurrentUser: true,
-          sent_at: new Date(),
-        }
-
-        // Append the new message to the last page's messages
-        const updatedPages = previousMessages.pages.map((page, index) => {
-          if (index === lastPageIndex) {
-            // Update the last page by appending the new message
-            return {
-              ...page,
-              messages: [...page.messages, newMessage],
-            }
-          }
-          // Return other pages unchanged
-          return page
-        })
-        // Update pageParams by reversing them to match reversed pages
-        const updatedPageParams = [...previousMessages.pageParams].reverse()
-        // Set the updated data back into the query cache
-        queryClient.setQueryData<GroupChatMessageReactQuery>(
-          ["group_chat_messages", chat_group_id],
-          {
-            ...previousMessages,
-            pages: updatedPages,
-            pageParams: updatedPageParams,
-          },
-        )
-
-        // Log the updated data for verification
-        const updatedData = queryClient.getQueryData([
-          "group_chat_messages",
-          chat_group_id,
-        ])
-        console.log("Done updating cache:", updatedData)
-      } catch (error) {
-        console.error("Error updating cache:", error)
-      }
-      return { previousMessages }
-    },
-    onError: (err, _, context) => {
-      queryClient.setQueryData(
-        ["group_chat_messages", chat_group_id],
-        context?.previousMessages,
-      )
-    },
+    //onMutate: async () => {
+    //  await queryClient.cancelQueries({
+    //    queryKey: ["group_chat_messages", chat_group_id],
+    //  })
+    //  const previousMessages = queryClient.getQueryData<GroupChatMessageReactQuery>([
+    //    "group_chat_messages",
+    //    chat_group_id,
+    //  ])
+    //
+    //  try {
+    //    // Ensure we have previous messages to work with
+    //    if (!previousMessages) {
+    //      throw new Error("No previous messages found in query cache.")
+    //    }
+    //
+    //    // Get the last page index
+    //    const lastPageIndex = previousMessages.pages.length - 1
+    //
+    //    // Construct the new message
+    //    const newMessage: MessageType = {
+    //      group_id: chat_group_id,
+    //      id: uuidv4().toString(),
+    //      sender_id,
+    //      receiver_id: receiver.id,
+    //      message: text,
+    //      isSentByCurrentUser: true,
+    //      sent_at: new Date(),
+    //    }
+    //
+    //    // Append the new message to the last page's messages
+    //    const updatedPages = previousMessages.pages.map((page, index) => {
+    //      if (index === lastPageIndex) {
+    //        // Update the last page by appending the new message
+    //        return {
+    //          ...page,
+    //          messages: [...page.messages, newMessage],
+    //        }
+    //      }
+    //      // Return other pages unchanged
+    //      return page
+    //    })
+    //    // Update pageParams by reversing them to match reversed pages
+    //    const updatedPageParams = [...previousMessages.pageParams].reverse()
+    //    // Set the updated data back into the query cache
+    //    queryClient.setQueryData<GroupChatMessageReactQuery>(
+    //      ["group_chat_messages", chat_group_id],
+    //      {
+    //        ...previousMessages,
+    //        pages: updatedPages,
+    //        pageParams: updatedPageParams,
+    //      },
+    //    )
+    //
+    //    // Log the updated data for verification
+    //    const updatedData = queryClient.getQueryData([
+    //      "group_chat_messages",
+    //      chat_group_id,
+    //    ])
+    //    console.log("Done updating cache:", updatedData)
+    //  } catch (error) {
+    //    console.error("Error updating cache:", error)
+    //  }
+    //  return { previousMessages }
+    //},
+    //onError: (err, _, context) => {
+    //  queryClient.setQueryData(
+    //    ["group_chat_messages", chat_group_id],
+    //    context?.previousMessages,
+    //  )
+    //},
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["group_chat_messages", chat_group_id] })
       setText("")

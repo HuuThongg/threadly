@@ -8,7 +8,6 @@ export default async function MessagePage({
 }: {
   params: { chat_group_id: string }
 }) {
-  //const supabase = createClient(
   const chat_group_id = params.chat_group_id
 
   const session = await auth()

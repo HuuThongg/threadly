@@ -5,13 +5,15 @@ import { Search, ZoomIn } from "lucide-react"
 import clsx from "clsx"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import Messages from "./Message"
+import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "../ui/dialog"
+import { FindUser } from "@/app/messages/_components/find-user"
 
 interface MessageBoxProps {
   messagePath?: boolean
 }
 const MessageBox = ({ messagePath = false }: MessageBoxProps) => {
   return (
-    <Popover>
+    <Dialog>
       <div
         className={clsx(`flex flex-col justify-between`, {
           "h-[calc(100vh-57px)]": !messagePath,
@@ -22,7 +24,7 @@ const MessageBox = ({ messagePath = false }: MessageBoxProps) => {
             <div className="">
               <div className="text-primary-text flex size-full flex-col">
                 <div className="px-4">
-                  <PopoverTrigger asChild>
+                  <DialogTrigger asChild>
                     <label
                       htmlFor=""
                       className="bg-third-clr flex w-full min-w-[40px] rounded-2xl align-baseline text-sm font-semibold outline-none">
@@ -36,10 +38,13 @@ const MessageBox = ({ messagePath = false }: MessageBoxProps) => {
                         type="search"
                       />
                     </label>
-                  </PopoverTrigger>
-                  <PopoverContent className="h-[700px] w-[360px] bg-black">
-                    {/*<SearchBox /> */} Search Box
-                  </PopoverContent>
+                  </DialogTrigger>
+                  <DialogContent className="h-full max-h-[calc(100%-40px)] w-full sm:max-h-[calc(100%-400px)]">
+                    <DialogHeader className="text-primary sm:text-center">
+                      New Message
+                    </DialogHeader>
+                    <FindUser />
+                  </DialogContent>
                 </div>
                 <div className="mt-1 px-4 py-2">
                   <div className="box-border flex h-[36px]">
@@ -72,7 +77,7 @@ const MessageBox = ({ messagePath = false }: MessageBoxProps) => {
           </div>
         ) : null}
       </div>
-    </Popover>
+    </Dialog>
   )
 }
 
